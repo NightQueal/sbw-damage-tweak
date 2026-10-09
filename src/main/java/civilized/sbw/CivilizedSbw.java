@@ -16,7 +16,7 @@ import java.util.Set;
 public final class CivilizedSbw {
  private static final Set<String> BANNED=Set.of("superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer");
  public CivilizedSbw() {
-  net.minecraftforge.fml.ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER,CompatConfig.SPEC,"civilized-sbw-server.toml");
+  net.minecraftforge.fml.ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON,CompatConfig.SPEC,"civilized-sbw-common.toml");
   MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST,DamageCompatibility::explosion);
   MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST,this::join);
   MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST,this::use);

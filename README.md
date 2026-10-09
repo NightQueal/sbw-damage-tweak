@@ -1,6 +1,6 @@
 # CIVILIZED SBW Compatibility
 
-Forge 1.20.1 compatibility for Superb Warfare, TACZ and Create Big Cannons. Version **1.1.0** retains SBW's native vehicle armor and custom modifier pipeline.
+Forge 1.20.1 compatibility for Superb Warfare, TACZ and Create Big Cannons. Version **1.1.1** retains SBW's native vehicle armor and custom modifier pipeline.
 
 ## Features
 - Correct TACZ explosions to use configured blast damage through SBW's distance/exposure formula.
@@ -10,7 +10,7 @@ Forge 1.20.1 compatibility for Superb Warfare, TACZ and Create Big Cannons. Vers
 - CIVILIZED pack restrictions for the SBW Netherite Hammer and DPS Generator.
 
 ## Install
-Use [the packaged 1.1.0 jar](dist/civilized-sbw-compat-1.1.0.jar) in the instance/server mods directory. The SHA-256 is recorded in [dist/SHA256SUMS](dist/SHA256SUMS). Copy [the configuration template](config/civilized-sbw-server.toml) into defaultconfigs/ before the first world load. Afterwards, edit the world's serverconfig/civilized-sbw-server.toml. Restart after installation.
+Use [the packaged 1.1.1 jar](dist/civilized-sbw-compat-1.1.1.jar) in the instance/server mods directory. The SHA-256 is recorded in [dist/SHA256SUMS](dist/SHA256SUMS). The mod generates config/civilized-sbw-common.toml in the instance/server folder. Edit that file or copy [the configuration template](config/civilized-sbw-common.toml) there. Settings apply to every world in that instance; on multiplayer servers, the server's config controls damage. Restart after changes. To preserve old settings, copy the previous world's serverconfig/civilized-sbw-server.toml to config/civilized-sbw-common.toml before launching 1.1.1.
 
 Requires Minecraft 1.20.1, Forge 47, Superb Warfare 0.8.9.1, TACZ 1.1.8 and Create Big Cannons 5.11.3, plus those mods' normal dependencies. The original instance uses Forge 47.4.10; the isolated development tests use 47.4.26.
 
@@ -46,7 +46,7 @@ On Linux/macOS:
 ./gradlew runGameTestServer
 ```
 
-The first build downloads Gradle/Forge development dependencies. Build output is build/libs/civilized-sbw-compat-1.1.0.jar. The test class and empty fixture structure are excluded from the production jar. Six integration tests passed with and without Explosion Overhaul; full-pack multiplayer combat balance remains untested.
+The first build downloads Gradle/Forge development dependencies. Build output is build/libs/civilized-sbw-compat-1.1.1.jar. The test class and empty fixture structure are excluded from the production jar. Six integration tests passed with and without Explosion Overhaul; full-pack multiplayer combat balance remains untested.
 
 ## License
 Original compatibility code is MIT licensed. Minecraft, Forge and the other mods retain their respective licenses. Third-party dependency jars are deliberately excluded.

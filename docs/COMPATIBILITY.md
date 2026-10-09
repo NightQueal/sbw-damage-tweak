@@ -1,4 +1,4 @@
-# SBW damage compatibility 1.1.0
+# SBW damage compatibility 1.1.1
 
 This release replaces the archived broad damage profiles with scoped compatibility corrections. SBW's own weapons, vehicle recipes and armor definitions are unchanged.
 
@@ -12,8 +12,7 @@ CBC shell, impact, flak and mortar-stone explosions keep their native radius-bas
 CBC can repeatedly damage the same entity while a projectile remains inside its bounding box. The optional default-on safeguard uses CBC's existing per-projectile untouchable-entity mechanism to allow one direct impact per vehicle. It still permits hits on other vehicles and separate blast damage. It does not remove the projectile or create a damage cap.
 
 ## Configuration
-Installed template: defaultconfigs/civilized-sbw-server.toml.
-Forge copies this into each world's serverconfig/civilized-sbw-server.toml when first loaded. For an existing generated config, edit the world/serverconfig copy; changing the template does not replace that copy. Restart the client/server after installing; restarting is also the simplest way to apply config edits.
+Instance-wide config: config/civilized-sbw-common.toml. Forge generates it when the mod loads. Every world in the instance uses the same settings; the dedicated server's file controls multiplayer damage. Restart after config edits. Existing per-world configs are no longer read. To migrate customized settings, copy the old world's serverconfig/civilized-sbw-server.toml into config/civilized-sbw-common.toml before launching this version.
 
 Compatibility toggles:
 - taczExplosionFix: enable/disable the TACZ blast correction.
