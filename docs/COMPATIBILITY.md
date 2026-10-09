@@ -1,4 +1,4 @@
-# SBW damage compatibility 1.1.1
+# SBW damage compatibility 1.1.2
 
 This release replaces the archived broad damage profiles with scoped compatibility corrections. SBW's own weapons, vehicle recipes and armor definitions are unchanged.
 
@@ -44,3 +44,6 @@ The native armor/custom-modifier pipeline is retained. CBC continues to use its 
 Source references:
 - SBW installed commit: https://github.com/Mercurows/SuperbWarfare/blob/993063bed/src/main/kotlin/com/atsuishio/superbwarfare/event/LivingEventHandler.kt
 - CBC matching version: https://github.com/Cannoneers-of-Create/CreateBigCannons/blob/v5.11.3%2Bmc.1.20.1/src/main/java/rbasamoyai/createbigcannons/munitions/big_cannon/AbstractBigCannonProjectile.java
+
+## Equipment toggles
+[equipment] disableNetheriteHammer and disableDpsGenerator default to true for CIVILIZED. Set either to false to allow that equipment. Restart after edits. The accompanying KubeJS recipe/JEI scripts now honor these toggles; older unconditional pack scripts must also be replaced. Client JEI visibility follows the client config, while server enforcement follows the server config. Re-enabling does not restore previously removed items/entities.

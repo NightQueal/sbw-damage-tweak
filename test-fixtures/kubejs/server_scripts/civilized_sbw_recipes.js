@@ -1,6 +1,8 @@
 // CIVILIZED SBW update. Vehicle assembly and gun recipes are intentionally preserved.
 ServerEvents.recipes(event => {
-  ['superbwarfare:netherite_hammer', 'superbwarfare:dps_generator_deployer'].forEach(id => event.remove({output: id}));
+  const equipment = Java.loadClass('civilized.sbw.CompatConfig')
+  if (equipment.DISABLE_HAMMER.get()) event.remove({output: 'superbwarfare:netherite_hammer'});
+  if (equipment.DISABLE_DPS.get()) event.remove({output: 'superbwarfare:dps_generator_deployer'});
   // Plain metal plates come only from the mechanical press.
   ['superbwarfare:steel_plate', 'superbwarfare:copper_plate'].forEach(id => event.remove({output: id}));
   event.custom({

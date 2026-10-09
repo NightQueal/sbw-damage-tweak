@@ -3,7 +3,7 @@ import java.util.List;
 import net.minecraftforge.common.ForgeConfigSpec;
 public final class CompatConfig {
  public static final ForgeConfigSpec SPEC;
- public static final ForgeConfigSpec.BooleanValue TACZ_EXPLOSIONS,CBC_ATTRIBUTION,CBC_SINGLE_HIT,DEBUG;
+ public static final ForgeConfigSpec.BooleanValue TACZ_EXPLOSIONS,CBC_ATTRIBUTION,CBC_SINGLE_HIT,DEBUG,DISABLE_HAMMER,DISABLE_DPS;
  public static final ForgeConfigSpec.DoubleValue TACZ_SCALE,CBC_DIRECT_SCALE,CBC_BLAST_SCALE;
  public static final ForgeConfigSpec.ConfigValue<List<? extends String>> TACZ_OVERRIDES,CBC_DIRECT_OVERRIDES,CBC_BLAST_OVERRIDES,VEHICLE_OVERRIDES;
  static {
@@ -21,6 +21,10 @@ public final class CompatConfig {
   CBC_DIRECT_OVERRIDES=b.comment("Exact projectile IDs; applies only to direct impacts. Multiply the global factor.").defineListAllowEmpty("cbcDirectProjectileMultipliers",List.of("createbigcannons:shot=1.0","createbigcannons:ap_shot=1.0","createbigcannons:ap_shell=1.0","createbigcannons:he_shell=1.0"),CompatConfig::validEntry);
   CBC_BLAST_OVERRIDES=b.comment("Exact projectile IDs; applies only to explosions. Multiply the global factor. CBC keeps its radius-based blast formula.").defineListAllowEmpty("cbcExplosionProjectileMultipliers",List.of("createbigcannons:ap_shell=1.0","createbigcannons:he_shell=1.0"),CompatConfig::validEntry);
   VEHICLE_OVERRIDES=b.comment("Exact SBW vehicle ID = additional incoming-damage multiplier. Applies only to compatibility-handled CBC direct/blast and TACZ blast hits; SBW's own weapons are unchanged.").defineListAllowEmpty("vehicleMultipliers",List.of(),CompatConfig::validEntry);
+  b.pop();
+  b.push("equipment");
+  DISABLE_HAMMER=b.comment("Disable the SBW Netherite Hammer. Set false to allow it.").define("disableNetheriteHammer",true);
+  DISABLE_DPS=b.comment("Disable the SBW DPS Generator and its deployer. Set false to allow them.").define("disableDpsGenerator",true);
   b.pop();SPEC=b.build();
  }
  private static boolean validEntry(Object entry) {

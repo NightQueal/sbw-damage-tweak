@@ -98,7 +98,27 @@ public final class IntegrationTests {
   var tag=TagKey.create(Registries.ITEM,new ResourceLocation("forge:ingots/tungsten"));
   require(!new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("superbwarfare:tungsten_ingot"))).is(tag)&&new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("northstar:tungsten_ingot"))).is(tag),"Tungsten separation broken");
   var recipes=h.getLevel().getRecipeManager();for(String id:new String[]{"civilized_sbw:pressing/steel_plate","civilized_sbw:pressing/copper_plate","civilized_sbw:compacting/armor_plate","civilized_sbw:vehicle_key"})require(recipes.byKey(new ResourceLocation(id)).isPresent(),"Missing "+id);
-  for(String id:new String[]{"civilized_sbw:drilling/scheelite","civilized_sbw:ore_vein_type/galena","superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"})require(recipes.byKey(new ResourceLocation(id)).isEmpty(),"Disabled recipe active "+id);
-  var dps=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare:dps_generator")).create(h.getLevel());require(!h.getLevel().addFreshEntity(dps),"DPS spawn enforcement lost");h.succeed();
+  for(String id:new String[]{"civilized_sbw:drilling/scheelite","civilized_sbw:ore_vein_type/galena"})require(recipes.byKey(new ResourceLocation(id)).isEmpty(),"Disabled recipe active "+id);
+  for(String id:new String[]{"superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"}) {boolean disabled=id.endsWith("hammer")?CompatConfig.DISABLE_HAMMER.get():CompatConfig.DISABLE_DPS.get();require(recipes.byKey(new ResourceLocation(id)).isPresent()!=disabled,"Recipe toggle failed "+id);}
+  var dps=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare:dps_generator")).create(h.getLevel());require(h.getLevel().addFreshEntity(dps)!=CompatConfig.DISABLE_DPS.get(),"DPS spawn toggle failed");dps.discard();h.succeed();
+ }
+ @GameTest(template="empty",timeoutTicks=40)
+ public static void equipmentToggles(GameTestHelper h) {
+  boolean hammerWas=CompatConfig.DISABLE_HAMMER.get(),dpsWas=CompatConfig.DISABLE_DPS.get();
+  try {
+   CompatConfig.DISABLE_DPS.set(false);
+   var entity=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare:dps_generator")).create(h.getLevel());
+   require(h.getLevel().addFreshEntity(entity),"Enabled DPS generator blocked");entity.discard();
+   for(String id:new String[]{"superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"}) {
+    var toggle=id.endsWith("hammer")?CompatConfig.DISABLE_HAMMER:CompatConfig.DISABLE_DPS;
+    toggle.set(false);
+    var item=new net.minecraft.world.entity.item.ItemEntity(h.getLevel(),0,10,0,new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(id))));
+    require(h.getLevel().addFreshEntity(item),"Enabled item blocked: "+id);item.discard();
+    toggle.set(true);
+    var blocked=new net.minecraft.world.entity.item.ItemEntity(h.getLevel(),0,10,0,new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(id))));
+    require(!h.getLevel().addFreshEntity(blocked),"Disabled item allowed: "+id);
+   }
+  } finally {CompatConfig.DISABLE_HAMMER.set(hammerWas);CompatConfig.DISABLE_DPS.set(dpsWas);}
+  h.succeed();
  }
 }
