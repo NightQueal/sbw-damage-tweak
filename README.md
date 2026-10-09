@@ -59,3 +59,8 @@ Equipment bans are optional [KubeJS pack extras](pack-extras/README.md), indepen
 Version 1.5.2 adds configurable SBW mounted-projectile armor profiles, selected-seat weapon/ammunition inspection out to 200 blocks, and mounted ammo modes in the armor scan. Both client and server must update. See [armor documentation](docs/ARMOR.md#150--mounted-sbw-weapons).
 
 Version 1.5.2 removes all equipment enforcement/configuration from the jar. CBC mapped direct impacts and supported shell explosions remain part of the shared advanced armor calculation.
+
+
+### 1.6.0 running-gear prototype and damage inspection
+Jade now displays hull HP, left/right wheel HP, selected mounted weapon direct/blast damage, and estimated per-projectile hull damage in HP alongside percentage. TACZ estimates use attachment-adjusted range damage. Estimates are non-ricochet direct hits; blast exposure, flight speed changes and scripts can change actual damage.
+With advanced armor and componentHits enabled, mapped wheel hits damage native wheel health independently. A projectile must then penetrate an additional hull plate behind the wheel to damage the hull; wheel-only rays cause no hull damage. Remaining penetration is reduced by the wheel armor. Ordinary area blast checks the hull rather than weak wheel armor. Native repairs and component mobility handling remain in use.

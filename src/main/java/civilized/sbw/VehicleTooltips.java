@@ -25,6 +25,14 @@ public final class VehicleTooltips {
  private static String n(double d){return String.format(Locale.ROOT,"%.1f",d);}
  private static void line(List<Component> out,String s){out.add(Component.literal(s).withStyle(ChatFormatting.GRAY));}
  @SubscribeEvent public static void logout(ClientPlayerNetworkEvent.LoggingOut e){ProfileSync.client=null;ProfileSync.clientProfiles=null;cachedProperties=null;cachedStack=ItemStack.EMPTY;}
+ public static double damageAt(ItemStack stack,double distance) {
+  var gun=IGun.getIGunOrNull(stack);if(gun==null)return 0;
+  var index=TimelessAPI.getCommonGunIndex(gun.getGunId(stack));if(index.isEmpty())return 0;
+  var cache=properties(stack,index.get().getGunData());int i=0;double last=0;
+  for(var pair:cache.getCache(com.tacz.guns.api.GunProperties.DAMAGE)){
+   last=pair.getDamage();double end=i++==0?cache.getCache(com.tacz.guns.api.GunProperties.EFFECTIVE_RANGE):pair.getDistance();if(distance<end)return last;
+  }return last;
+ }
  public static ArmorProfiles.Ammo gunProfile(ItemStack stack) {
   var data=ProfileSync.clientProfiles;var settings=ProfileSync.client;
   if(data==null||settings==null||!settings.enabled())return null;

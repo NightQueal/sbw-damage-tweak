@@ -15,6 +15,8 @@ public final class JadeVehiclePlugin implements IWailaPlugin {
    if(profiles==null||settings==null||!settings.enabled()||!(accessor.getEntity() instanceof VehicleEntity v))return;
    var armor=profiles.vehicles.get(DamageCompatibility.id(v));if(armor==null)return;
    boolean details=accessor.showDetails()||(accessor.getPlayer()!=null&&MountedWeapons.vehicle(accessor.getPlayer())!=null&&CompatConfig.MOUNTED_DETAILS.get());
+   tooltip.add(Component.literal("Hull: "+StatText.number(v.getHealth())+" / "+StatText.number(v.getMaxHealth())+" HP"));
+   if(details)tooltip.add(Component.literal("Wheel HP L/R: "+StatText.number(v.getLeftWheelHealth())+" / "+StatText.number(v.getRightWheelHealth())));
    tooltip.addAll(VehicleStats.armor(armor,details));if(!details)return;
    var player=accessor.getPlayer();if(player==null)return;
    var mounted=MountedWeapons.inspect(player,profiles,settings.mounted());
@@ -31,7 +33,19 @@ public final class JadeVehiclePlugin implements IWailaPlugin {
    if(mounted!=null&&ammo.blastPenetration>0)tooltip.add(Component.literal("Blast Penetration: "+StatText.number(ammo.blastPenetration)+" mm"));
    tooltip.add(Component.literal("Pen. Chance: "+StatText.number(result.penetrationChance())+"%"));
    tooltip.add(Component.literal("Ricochet Chance: "+StatText.number(result.ricochetChance())+"%"));
-   tooltip.add(Component.literal("Post-Pen. Damage: "+StatText.number(result.damagePercent())+"%"));
+   double raw=mounted==null?VehicleTooltips.damageAt(player.getMainHandItem(),delta.length()):MountedWeapons.vehicle(player).getGunData(player).get(com.atsuishio.superbwarfare.data.gun.GunProp.DAMAGE);
+   double finalDamage=raw*result.damagePercent()/100;
+   if(RunningGear.wheel(hit.part())&&settings.components()) {
+    var hull=hits.stream().filter(h->h.distance()>hit.distance()+.001&&!RunningGear.wheel(h.part())&&h.part()!=com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE&&h.part()!=com.atsuishio.superbwarfare.tools.OBB.Part.SUB_ENGINE).findFirst().orElse(null);
+    double wheelDamage=finalDamage;finalDamage=0;
+    if(hull!=null&&result.damagePercent()>0){double hullAngle=Math.toDegrees(Math.acos(Math.max(0,Math.min(1,-direction.dot(hull.normal())))));finalDamage=ArmorModel.resolve(RunningGear.residual(ammo,result.penetration()-result.armor()),wheelDamage,ArmorModel.plate(armor,v,hull),armor.chemicalMultiplier,hullAngle,0,1,false,settings.ricochets()).damage();}
+    tooltip.add(Component.literal("Est. Wheel Damage: "+StatText.number(wheelDamage)+" HP"));
+   }
+   if(!RunningGear.wheel(hit.part())&&settings.components()&&result.damagePercent()>0&&hits.stream().anyMatch(h->h.part()==com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE||h.part()==com.atsuishio.superbwarfare.tools.OBB.Part.SUB_ENGINE))finalDamage*=armor.engineDamageMultiplier;
+   if(mounted!=null){var gun=MountedWeapons.vehicle(player).getGunData(player);tooltip.add(Component.literal("Blast Damage: "+StatText.number(gun.get(com.atsuishio.superbwarfare.data.gun.GunProp.EXPLOSION_DAMAGE))+" HP | Radius: "+StatText.number(gun.get(com.atsuishio.superbwarfare.data.gun.GunProp.EXPLOSION_RADIUS))+"m"));}
+   tooltip.add(Component.literal("Weapon Damage: "+StatText.number(raw)+" HP"));
+   tooltip.add(Component.literal("Est. Hull Damage: "+StatText.number(finalDamage)+" HP"));
+   tooltip.add(Component.literal("Post-Pen. Damage: "+StatText.number(raw>0?finalDamage/raw*100:0)+"%"));
   }
  }
 }

@@ -9,7 +9,8 @@
     "VehicleInputMixin",
     "CbcImpactMixin",
     "TaczAttachmentMixin",
-    "SbwProjectileProfileMixin"
+    "SbwProjectileProfileMixin",
+    "RunningGearMixin"
   ],
   "injectors": {
     "defaultRequire": 1

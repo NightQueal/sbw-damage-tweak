@@ -103,12 +103,27 @@ public final class ArmorModel {
   if(hits.isEmpty())return null; // Missing component geometry: retain native behavior.
   boolean areaBlast=blast&&!jet;
   Hit surface=hits.get(0);
+  if(areaBlast)surface=hits.stream().filter(h->!RunningGear.wheel(h.part())).findFirst().orElse(surface);
   double angle=Math.toDegrees(Math.acos(Math.min(1,Math.max(0,-direction.dot(surface.normal())))));
   float input=raw;
 
   Result result=resolve(ammo,input,plate(profile,vehicle,surface),profile.chemicalMultiplier,angle,projectile.getDeltaMovement().length(),sample(projectile,vehicle),areaBlast,CompatConfig.RICOCHETS.get());
   if(!areaBlast&&input>0)ImpactFeedback.emit(vehicle,(Projectile)projectile,surface.point(),result);
   OBB.Part part=surface.part();
+  if(!areaBlast&&CompatConfig.COMPONENT_HITS.get()&&RunningGear.wheel(part)) {
+   double wheelDamage=result.damage();
+   Hit wheelSurface=surface;
+   Hit hull=hits.stream().filter(h->h.distance()>wheelSurface.distance()+.001&&!RunningGear.wheel(h.part())&&h.part()!=OBB.Part.MAIN_ENGINE&&h.part()!=OBB.Part.SUB_ENGINE).findFirst().orElse(null);
+   // Wheel armor spends penetration before a second, independent hull check.
+   if(result.penetrated()&&hull!=null) {
+    var residual=RunningGear.residual(ammo,result.penetration()-result.effectiveArmor());
+    double hullAngle=Math.toDegrees(Math.acos(Math.max(0,Math.min(1,-direction.dot(hull.normal())))));
+    result=resolve(residual,wheelDamage,plate(profile,vehicle,hull),profile.chemicalMultiplier,hullAngle,0,sample(projectile,vehicle),false,CompatConfig.RICOCHETS.get());
+   } else result=new Result(0,false,result.ricochet(),result.effectiveArmor(),result.penetration());
+   RunningGear.prepare(vehicle,source,part,(float)wheelDamage);
+   OBBHitter.getInstance(projectile).sbw$setCurrentHitPart(OBB.Part.EMPTY);
+   return (float)result.damage();
+  }
   if(!areaBlast&&result.penetrated()&&CompatConfig.COMPONENT_HITS.get()&&part!=OBB.Part.WHEEL_LEFT&&part!=OBB.Part.WHEEL_RIGHT) {
    // Find the first intersected engine behind the exterior plate. Hull is still tested before engine damage.
    for(Hit hit:hits)if(hit.part()==OBB.Part.MAIN_ENGINE||hit.part()==OBB.Part.SUB_ENGINE){part=hit.part();break;}

@@ -380,4 +380,42 @@ public final class IntegrationTests {
    CompatConfig.ADVANCED_ARMOR.set(false);tank.discard();target.discard();h.succeed();
   });
  }
+
+ @GameTest(template="empty",timeoutTicks=60,batch="separateRunningGear")
+ public static void separateRunningGear(GameTestHelper h) {
+  var v=vehicle(h,"m_1a_2");h.runAtTickTime(8,()->{
+   var source=h.getLevel().damageSources().generic();v.setLeftWheelHealth(100);float health=v.getHealth();
+   RunningGear.prepare(v,source,com.atsuishio.superbwarfare.tools.OBB.Part.WHEEL_LEFT,40);
+   v.setLastDamageSource(source);v.setLastDamageStamp(v.level().getGameTime());v.onHurt(0,null,true);
+   require(v.getLeftWheelHealth()==60,"Wheel component did not take separate damage");
+   require(v.getHealth()==health,"Wheel-only hit damaged hull");
+   v.onHurt(0,null,true);require(v.getLeftWheelHealth()==60,"Wheel damage committed twice");
+   var ammo=new ArmorProfiles.Ammo();ammo.penetration=25;ammo.normalization=0;
+   var wheel=ArmorModel.resolve(ammo,75,12,1,0,0,1,false,false);
+   var hull=ArmorModel.resolve(RunningGear.residual(ammo,wheel.penetration()-wheel.effectiveArmor()),wheel.damage(),75,1,0,0,1,false,false);
+   require(wheel.damage()>0&&hull.damage()==0,"Low-penetration wheel shot bypassed tank hull");
+   ammo.penetration=600;wheel=ArmorModel.resolve(ammo,100,12,1,0,0,1,false,false);
+   hull=ArmorModel.resolve(RunningGear.residual(ammo,wheel.penetration()-wheel.effectiveArmor()),wheel.damage(),75,1,0,0,1,false,false);
+   require(hull.damage()>0&&hull.damage()<wheel.damage(),"High penetration round failed second plate");
+   // Exercise actual M1A2 geometry and the damage mixin, not only the pure two-plate math.
+   var projectile=cannon(h,"shot");var profile=ArmorProfiles.ammo("entity:createbigcannons:shot");double oldPen=profile.penetration;double oldSpeed=profile.referenceSpeed;
+   profile.penetration=25;profile.referenceSpeed=0;CompatConfig.ADVANCED_ARMOR.set(true);
+   boolean exercised=false;
+   try {
+    outer:for(var box:v.getOBBs())if(RunningGear.wheel(box.part))for(var dir:new net.minecraft.world.phys.Vec3[]{new net.minecraft.world.phys.Vec3(1,0,0),new net.minecraft.world.phys.Vec3(-1,0,0),new net.minecraft.world.phys.Vec3(0,0,1),new net.minecraft.world.phys.Vec3(0,0,-1)}) {
+     var center=new net.minecraft.world.phys.Vec3(box.center.x,box.center.y,box.center.z);var start=center.subtract(dir.scale(10));var hits=ArmorModel.trace(v,start,dir,30);
+     if(hits.isEmpty()||!RunningGear.wheel(hits.get(0).part()))continue;
+     projectile.setPos(start);projectile.setDeltaMovement(dir);var ds=new AttributedDamageSource(h.getLevel().damageSources().generic(),projectile,1);
+     float beforeHull=v.getHealth();v.setLeftWheelHealth(100);v.setRightWheelHealth(100);
+     v.hurt(ds,75);
+     require(v.getHealth()==beforeHull,"Wheel weakspot still damages hull through native hurt");
+     require(v.getLeftWheelHealth()<100||v.getRightWheelHealth()<100,"Native wheel hit did not damage running gear");
+     exercised=true;break outer;
+    }
+    require(exercised,"No native wheel geometry exercised");
+   } finally {profile.penetration=oldPen;profile.referenceSpeed=oldSpeed;CompatConfig.ADVANCED_ARMOR.set(false);}
+   System.out.println("COMPAT_TEST wheels separateHP=40 hullOnly=0 APthroughTwoPlates="+hull.damage());
+   v.discard();h.succeed();
+  });
+ }
 }
