@@ -67,7 +67,13 @@ public final class VehicleTooltips {
   rows.add(Component.literal(StatText.change(value)+" "+name).withStyle(value>1?ChatFormatting.GREEN:ChatFormatting.RED));
  }
  @SubscribeEvent public static void tooltip(ItemTooltipEvent e) {
-  ItemStack stack=e.getItemStack();IGun gun=IGun.getIGunOrNull(stack);if(gun==null)return;
+  ItemStack stack=e.getItemStack();
+  var profiles=ProfileSync.clientProfiles;var settings=ProfileSync.client;
+  if(profiles!=null&&settings!=null&&settings.enabled()) {
+   var armor=profiles.vehicles.get(VehicleStats.itemVehicle(stack));
+   if(armor!=null){e.getToolTip().addAll(VehicleStats.armor(armor,Screen.hasShiftDown()));return;}
+  }
+  IGun gun=IGun.getIGunOrNull(stack);if(gun==null)return;
   var ammo=gunProfile(stack);if(ammo==null)return;
   var out=e.getToolTip();
   line(out,"Vehicle Penetration: "+StatText.number(ammo.penetration)+" mm");

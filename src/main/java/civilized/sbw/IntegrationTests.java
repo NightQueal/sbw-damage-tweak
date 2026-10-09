@@ -271,6 +271,22 @@ public final class IntegrationTests {
   shooter.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,ItemStack.EMPTY);h.succeed();
  }
 
+ @GameTest(template="empty",timeoutTicks=40,batch="vehicleInspection")
+ public static void vehicleInspection(GameTestHelper h) {
+  var ammo=ArmorProfiles.ammo("ammo:tacz:50bmg");
+  var slope=VehicleStats.preview(ammo,2,1,70,true);
+  require(Math.abs(slope.penetrationChance()-100.0/3)<.001,"Ricochet probability not included in inspection");
+  require(VehicleStats.preview(ammo,75,1,0,true).penetrationChance()==0,"Inspection shows penetration through blocked armor");
+  require(VehicleStats.preview(ammo,1,1,85,true).penetrationChance()==100,"Overmatch inspection incorrect");
+  var tank=ArmorProfiles.vehicle("superbwarfare:m_1a_2");require(VehicleStats.armor(tank,false).size()==1&&VehicleStats.armor(tank,true).size()==6,"Armor detail rows incorrect");
+  var type=net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getValue(new net.minecraft.resources.ResourceLocation("superbwarfare:m_1a_2"));
+  var container=com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(type);
+  require(VehicleStats.itemVehicle(container).equals("superbwarfare:m_1a_2"),"Actual SBW vehicle container not recognized");
+  var item=new ItemStack(net.minecraft.world.item.Items.STONE);item.getOrCreateTag().putString("EntityType","superbwarfare:m_1a_2");require(VehicleStats.itemVehicle(item).equals("superbwarfare:m_1a_2"),"Container vehicle ID missing");
+  var data=new net.minecraft.nbt.CompoundTag();data.putString("EntityType","superbwarfare:truck");item.setTag(new net.minecraft.nbt.CompoundTag());item.getOrCreateTag().put("BlockEntityTag",data);require(VehicleStats.itemVehicle(item).equals("superbwarfare:truck"),"Deployer vehicle ID missing");
+  h.succeed();
+ }
+
 }
 
 
