@@ -7,7 +7,7 @@ Project type: Mods
 Loader: Forge
 Minecraft version: 1.20.1
 License: MIT
-File: civilized-sbw-compat-1.5.1.jar
+File: civilized-sbw-compat-1.5.2.jar
 File type: Beta (full-pack multiplayer balance has not been validated)
 Environment: Client and server
 
@@ -51,7 +51,7 @@ The GitHub repository is private; do not advertise it as a publicly accessible s
 - Existing armor JSON receives a new attachments section while preserving prior values.
 - Build and fourteen isolated integration tests passed with Explosion Overhaul. Client tooltip appearance/full multiplayer balance need play testing.
 
-## 1.5.1 changelog
+## 1.5.2 changelog
 - Removed equipment bans and their configuration from the combat jar.
 - Moved CIVILIZED restrictions into independent optional KubeJS scripts with JSON toggles, recipes, JEI hiding, use/spawn checks and inventory cleanup once per second.
 - Existing mapped TACZ, CBC and SBW mounted damage and inspection behavior is retained.

@@ -20,7 +20,7 @@ public final class JadeVehiclePlugin implements IWailaPlugin {
    var mounted=MountedWeapons.inspect(player,profiles,settings.mounted());
    if(mounted!=null&&mounted.weapon().isEmpty())mounted=null;
    var ammo=mounted==null?VehicleTooltips.gunProfile(player.getMainHandItem()):mounted.ammo();if(ammo==null)return;
-   if(mounted!=null){tooltip.add(Component.translatable(mounted.weapon()));tooltip.add(Component.literal("Ammo: ").append(mounted.ammunition().startsWith("superbwarfare:")?Component.translatable("item.superbwarfare."+mounted.ammunition().substring(14)):Component.literal(mounted.ammunition())));}
+   if(mounted!=null){tooltip.add(Component.translatable(mounted.weapon(), ""));tooltip.add(Component.literal("Ammo: ").append(mounted.ammunition().startsWith("superbwarfare:")?Component.translatable("item.superbwarfare."+mounted.ammunition().substring(14)):Component.literal(mounted.ammunition())));}
    Vec3 start=mounted==null?player.getEyePosition():mounted.origin();Vec3 end=accessor.getHitResult().getLocation();Vec3 delta=end.subtract(start);
    if(delta.lengthSqr()<1e-9)return;Vec3 direction=mounted==null?delta.normalize():mounted.direction().normalize();var hits=ArmorModel.trace(v,start,direction,delta.length()+8);if(hits.isEmpty())return;
    var hit=hits.get(0);double angle=Math.toDegrees(Math.acos(Math.max(0,Math.min(1,-direction.dot(hit.normal())))));

@@ -1,6 +1,6 @@
 # CIVILIZED SBW Compatibility
 
-Forge 1.20.1 compatibility for Superb Warfare, TACZ and Create Big Cannons. Version **1.5.1** adds an optional, configurable armor model. Native armor remains the default; enable advancedArmor to test the new model.
+Forge 1.20.1 compatibility for Superb Warfare, TACZ and Create Big Cannons. Version **1.5.2** adds an optional, configurable armor model. Native armor remains the default; enable advancedArmor to test the new model.
 
 ## Features
 - Attachment-aware FMJ/HP/incendiary/HE/slug vehicle penetration and server-synchronized gun/attachment tooltips. Hold Shift on a gun for detail.
@@ -13,7 +13,7 @@ Forge 1.20.1 compatibility for Superb Warfare, TACZ and Create Big Cannons. Vers
 - Independent toggles for CIVILIZED restrictions on the SBW Netherite Hammer and DPS Generator.
 
 ## Install
-Use [the packaged 1.3.0 jar](dist/civilized-sbw-compat-1.5.1.jar) in the instance/server mods directory. The SHA-256 is recorded in [dist/SHA256SUMS](dist/SHA256SUMS). The mod generates config/civilized-sbw-common.toml in the instance/server folder. Edit that file or copy [the configuration template](config/civilized-sbw-common.toml) there. Settings apply to every world in that instance; on multiplayer servers, the server's config controls damage. Restart after changes. To preserve old settings, copy the previous world's serverconfig/civilized-sbw-server.toml to config/civilized-sbw-common.toml before launching 1.2.1.
+Use [the packaged 1.3.0 jar](dist/civilized-sbw-compat-1.5.2.jar) in the instance/server mods directory. The SHA-256 is recorded in [dist/SHA256SUMS](dist/SHA256SUMS). The mod generates config/civilized-sbw-common.toml in the instance/server folder. Edit that file or copy [the configuration template](config/civilized-sbw-common.toml) there. Settings apply to every world in that instance; on multiplayer servers, the server's config controls damage. Restart after changes. To preserve old settings, copy the previous world's serverconfig/civilized-sbw-server.toml to config/civilized-sbw-common.toml before launching 1.2.1.
 
 Requires Minecraft 1.20.1, Forge 47, Superb Warfare 0.8.9.1, TACZ 1.1.8 and Create Big Cannons 5.11.3, plus those mods' normal dependencies. The original instance uses Forge 47.4.10; the isolated development tests use 47.4.26.
 
@@ -49,13 +49,13 @@ On Linux/macOS:
 ./gradlew runGameTestServer
 ```
 
-The first build downloads Gradle/Forge development dependencies. Build output is build/libs/civilized-sbw-compat-1.5.1.jar. The test class and empty fixture structure are excluded from the production jar. The armor baseline passed eleven tests with and without Explosion Overhaul. Version 1.2.1 passed twelve tests including the registered scan command and permission checks. Version 1.3.0 passed fourteen tests including attachment capture and profile packet round-trip. Tooltip appearance and full-pack multiplayer combat balance remain untested.
+The first build downloads Gradle/Forge development dependencies. Build output is build/libs/civilized-sbw-compat-1.5.2.jar. The test class and empty fixture structure are excluded from the production jar. The armor baseline passed eleven tests with and without Explosion Overhaul. Version 1.2.1 passed twelve tests including the registered scan command and permission checks. Version 1.3.0 passed fourteen tests including attachment capture and profile packet round-trip. Tooltip appearance and full-pack multiplayer combat balance remain untested.
 
 ## License
 Original compatibility code is MIT licensed. Minecraft, Forge and the other mods retain their respective licenses. Third-party dependency jars are deliberately excluded.
 
 Equipment bans are optional [KubeJS pack extras](pack-extras/README.md), independent of this combat mod. Their toggles live in kubejs/config/civilized_sbw_equipment.json.
 
-Version 1.5.1 adds configurable SBW mounted-projectile armor profiles, selected-seat weapon/ammunition inspection out to 200 blocks, and mounted ammo modes in the armor scan. Both client and server must update. See [armor documentation](docs/ARMOR.md#150--mounted-sbw-weapons).
+Version 1.5.2 adds configurable SBW mounted-projectile armor profiles, selected-seat weapon/ammunition inspection out to 200 blocks, and mounted ammo modes in the armor scan. Both client and server must update. See [armor documentation](docs/ARMOR.md#150--mounted-sbw-weapons).
 
-Version 1.5.1 removes all equipment enforcement/configuration from the jar. CBC mapped direct impacts and supported shell explosions remain part of the shared advanced armor calculation.
+Version 1.5.2 removes all equipment enforcement/configuration from the jar. CBC mapped direct impacts and supported shell explosions remain part of the shared advanced armor calculation.
