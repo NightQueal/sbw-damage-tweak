@@ -1,0 +1,12 @@
+/.gradle/
+/build/
+/runtime-mods/
+/test-run/
+*.log
+*.jar
+!/gradle/wrapper/gradle-wrapper.jar
+!/dist/civilized-sbw-compat-*.jar
+__pycache__/
+.idea/
+.vscode/
+*.iml

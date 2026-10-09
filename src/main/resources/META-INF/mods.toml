@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+[[mods]]
+modId="civilized_sbw"
+version="1.1.0"
+displayName="CIVILIZED SBW Compatibility"
+description="Native SBW armor compatibility for TACZ/CBC, configurable input scaling, and disabled SBW equipment."
+[[dependencies.civilized_sbw]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.civilized_sbw]]
+modId="superbwarfare"
+mandatory=true
+versionRange="[0.8.9.1,0.9)"
+ordering="AFTER"
+side="BOTH"
+[[dependencies.civilized_sbw]]
+modId="tacz"
+mandatory=true
+versionRange="[1.1.8,2)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.civilized_sbw]]
+modId="createbigcannons"
+mandatory=true
+versionRange="[5.11.3,5.12)"
+ordering="AFTER"
+side="BOTH"

@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "civilized.sbw.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "TaczExplosionAccessor",
+    "CbcDamageSourceMixin",
+    "VehicleInputMixin",
+    "CbcImpactMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

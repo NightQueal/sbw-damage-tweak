@@ -1,0 +1,37 @@
+plugins {
+ id 'java'
+ id 'net.minecraftforge.gradle' version '6.0.54'
+}
+version = '1.1.0'
+group = 'civilized.sbw'
+base { archivesName = 'civilized-sbw-compat' }
+java { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
+minecraft {
+ mappings channel: 'official', version: '1.20.1'
+ runs {
+  gameTestServer {
+   workingDirectory project.file('test-run')
+   args '--mixin', 'civilized-sbw.mixins.json'
+   property 'mixin.env.remapRefMap', 'true'
+   property 'mixin.env.refMapRemappingFile', project.file('build/createSrgToMcp/output.srg').absolutePath
+   property 'forge.enabledGameTestNamespaces', 'civilized_sbw'
+   mods { civilized_sbw { source sourceSets.main } }
+  }
+ }
+}
+repositories { mavenCentral(); flatDir { dirs 'runtime-mods' } }
+dependencies {
+ minecraft 'net.minecraftforge:forge:1.20.1-47.4.26'
+ fileTree('runtime-mods').matching { include '*-1.jar' }.files.sort().each { dependencyJar ->
+  def artifactName = dependencyJar.name.substring(0, dependencyJar.name.length() - '-1.jar'.length())
+  implementation fg.deobf("local:${artifactName}:1")
+ }
+}
+
+jar {
+ exclude 'civilized/sbw/IntegrationTests.class'
+ exclude 'data/civilized_sbw/structures/empty.nbt'
+ manifest { attributes(['MixinConfigs':'civilized-sbw.mixins.json']) }
+ finalizedBy 'reobfJar'
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.compilerArgs += ['-proc:none'] }
