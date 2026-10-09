@@ -108,27 +108,28 @@ public final class IntegrationTests {
   require(!new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("superbwarfare:tungsten_ingot"))).is(tag)&&new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("northstar:tungsten_ingot"))).is(tag),"Tungsten separation broken");
   var recipes=h.getLevel().getRecipeManager();for(String id:new String[]{"civilized_sbw:pressing/steel_plate","civilized_sbw:pressing/copper_plate","civilized_sbw:compacting/armor_plate","civilized_sbw:vehicle_key"})require(recipes.byKey(new ResourceLocation(id)).isPresent(),"Missing "+id);
   for(String id:new String[]{"civilized_sbw:drilling/scheelite","civilized_sbw:ore_vein_type/galena"})require(recipes.byKey(new ResourceLocation(id)).isEmpty(),"Disabled recipe active "+id);
-  for(String id:new String[]{"superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"}) {boolean disabled=id.endsWith("hammer")?CompatConfig.DISABLE_HAMMER.get():CompatConfig.DISABLE_DPS.get();require(recipes.byKey(new ResourceLocation(id)).isPresent()!=disabled,"Recipe toggle failed "+id);}
-  var dps=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare:dps_generator")).create(h.getLevel());require(h.getLevel().addFreshEntity(dps)!=CompatConfig.DISABLE_DPS.get(),"DPS spawn toggle failed");dps.discard();h.succeed();
- }
- @GameTest(template="empty",timeoutTicks=40,batch="equipmentToggles")
- public static void equipmentToggles(GameTestHelper h) {
-  boolean hammerWas=CompatConfig.DISABLE_HAMMER.get(),dpsWas=CompatConfig.DISABLE_DPS.get();
-  try {
-   CompatConfig.DISABLE_DPS.set(false);
-   var entity=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare:dps_generator")).create(h.getLevel());
-   require(h.getLevel().addFreshEntity(entity),"Enabled DPS generator blocked");entity.discard();
-   for(String id:new String[]{"superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"}) {
-    var toggle=id.endsWith("hammer")?CompatConfig.DISABLE_HAMMER:CompatConfig.DISABLE_DPS;
-    toggle.set(false);
-    var item=new net.minecraft.world.entity.item.ItemEntity(h.getLevel(),0,10,0,new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(id))));
-    require(h.getLevel().addFreshEntity(item),"Enabled item blocked: "+id);item.discard();
-    toggle.set(true);
-    var blocked=new net.minecraft.world.entity.item.ItemEntity(h.getLevel(),0,10,0,new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(id))));
-    require(!h.getLevel().addFreshEntity(blocked),"Disabled item allowed: "+id);
-   }
-  } finally {CompatConfig.DISABLE_HAMMER.set(hammerWas);CompatConfig.DISABLE_DPS.set(dpsWas);}
+  for(String id:new String[]{"superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"})require(recipes.byKey(new ResourceLocation(id)).isPresent()!=packRule(id.endsWith("hammer")?"disableNetheriteHammer":"disableDpsGenerator"),"Pack recipe toggle failed "+id);
   h.succeed();
+ }
+ private static boolean packRule(String name) {
+  try{return com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(net.minecraftforge.fml.loading.FMLPaths.GAMEDIR.get().resolve("kubejs/config/civilized_sbw_equipment.json"))).getAsJsonObject().get(name).getAsBoolean();}catch(Exception e){throw new RuntimeException(e);}
+ }
+ @GameTest(template="empty",timeoutTicks=40,batch="packEquipmentSeparation")
+ public static void packEquipmentSeparation(GameTestHelper h) {
+  require(!CompatConfig.SPEC.getSpec().contains("equipment"),"Combat mod still defines equipment controls");
+  boolean dpsDisabled=packRule("disableDpsGenerator");
+  var generator=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare:dps_generator")).create(h.getLevel());
+  require(h.getLevel().addFreshEntity(generator)!=dpsDisabled,"External generator spawn rule failed");generator.discard();
+  var player=net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());player.tickCount=20;
+  for(String id:new String[]{"superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"}) {
+   boolean disabled=packRule(id.endsWith("hammer")?"disableNetheriteHammer":"disableDpsGenerator");
+   var stack=new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(id)));
+   var item=new net.minecraft.world.entity.item.ItemEntity(h.getLevel(),0,10,0,stack.copy());require(h.getLevel().addFreshEntity(item)!=disabled,"External dropped-item rule failed "+id);item.discard();
+   player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stack.copy());
+   var use=new net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem(player,net.minecraft.world.InteractionHand.MAIN_HAND);net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(use);require(use.isCanceled()==disabled,"External use rule failed "+id);
+   net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TickEvent.PlayerTickEvent(net.minecraftforge.event.TickEvent.Phase.END,player));require(player.getMainHandItem().isEmpty()==disabled,"External inventory cleanup failed "+id);
+  }
+  player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,ItemStack.EMPTY);h.succeed();
  }
  @GameTest(template="empty",timeoutTicks=40,batch="armorMathAndGeometry")
  public static void armorMathAndGeometry(GameTestHelper h) {

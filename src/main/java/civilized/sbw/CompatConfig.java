@@ -9,7 +9,7 @@ public final class CompatConfig {
  public static final ForgeConfigSpec.ConfigValue<String> PEN_SOUND,BLOCK_SOUND,RICOCHET_SOUND;
  public static final ForgeConfigSpec.DoubleValue IMPACT_VOLUME,PEN_PITCH,BLOCK_PITCH,RICOCHET_PITCH;
  public static final ForgeConfigSpec.BooleanValue MOUNTED_ARMOR,MOUNTED_DETAILS;
- public static final ForgeConfigSpec.BooleanValue TACZ_EXPLOSIONS,CBC_ATTRIBUTION,CBC_SINGLE_HIT,DEBUG,DISABLE_HAMMER,DISABLE_DPS,ADVANCED_ARMOR,RICOCHETS,COMPONENT_HITS;
+ public static final ForgeConfigSpec.BooleanValue TACZ_EXPLOSIONS,CBC_ATTRIBUTION,CBC_SINGLE_HIT,DEBUG,ADVANCED_ARMOR,RICOCHETS,COMPONENT_HITS;
  public static final ForgeConfigSpec.DoubleValue TACZ_SCALE,CBC_DIRECT_SCALE,CBC_BLAST_SCALE;
  public static final ForgeConfigSpec.ConfigValue<List<? extends String>> TACZ_OVERRIDES,CBC_DIRECT_OVERRIDES,CBC_BLAST_OVERRIDES,VEHICLE_OVERRIDES;
  static {
@@ -27,10 +27,6 @@ public final class CompatConfig {
   CBC_DIRECT_OVERRIDES=b.comment("Exact projectile IDs; applies only to direct impacts. Multiply the global factor.").defineListAllowEmpty("cbcDirectProjectileMultipliers",List.of("createbigcannons:shot=1.0","createbigcannons:ap_shot=1.0","createbigcannons:ap_shell=1.0","createbigcannons:he_shell=1.0"),CompatConfig::validEntry);
   CBC_BLAST_OVERRIDES=b.comment("Exact projectile IDs; applies only to explosions. Multiply the global factor. CBC keeps its radius-based blast formula.").defineListAllowEmpty("cbcExplosionProjectileMultipliers",List.of("createbigcannons:ap_shell=1.0","createbigcannons:he_shell=1.0"),CompatConfig::validEntry);
   VEHICLE_OVERRIDES=b.comment("Exact SBW vehicle ID = additional incoming-damage multiplier. Applies only to compatibility-handled CBC direct/blast and TACZ blast hits; These multipliers do not scale SBW mounted weapons.").defineListAllowEmpty("vehicleMultipliers",List.of(),CompatConfig::validEntry);
-  b.pop();
-  b.push("equipment");
-  DISABLE_HAMMER=b.comment("Disable the SBW Netherite Hammer. Set false to allow it.").define("disableNetheriteHammer",true);
-  DISABLE_DPS=b.comment("Disable the SBW DPS Generator and its deployer. Set false to allow them.").define("disableDpsGenerator",true);
   b.pop();
   b.push("armor");
   ADVANCED_ARMOR=b.comment("Use configurable vehicle/ammunition armor profiles instead of native armor for mapped projectile hits. Unmapped hits retain native SBW armor. Restart after edits.").define("advancedArmor",false);

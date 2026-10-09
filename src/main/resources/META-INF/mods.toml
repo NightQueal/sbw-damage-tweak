@@ -3,9 +3,9 @@ loaderVersion="[47,)"
 license="MIT"
 [[mods]]
 modId="civilized_sbw"
-version="1.5.0"
+version="1.5.1"
 displayName="CIVILIZED SBW Compatibility"
-description="Native SBW armor compatibility for TACZ/CBC, configurable input scaling, and disabled SBW equipment."
+description="Configurable vehicle armor and penetration for TACZ, Create Big Cannons and SBW mounted weapons, with combat inspection and impact feedback."
 [[dependencies.civilized_sbw]]
 modId="forge"
 mandatory=true

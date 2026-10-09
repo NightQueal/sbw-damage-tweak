@@ -45,8 +45,8 @@ Source references:
 - SBW installed commit: https://github.com/Mercurows/SuperbWarfare/blob/993063bed/src/main/kotlin/com/atsuishio/superbwarfare/event/LivingEventHandler.kt
 - CBC matching version: https://github.com/Cannoneers-of-Create/CreateBigCannons/blob/v5.11.3%2Bmc.1.20.1/src/main/java/rbasamoyai/createbigcannons/munitions/big_cannon/AbstractBigCannonProjectile.java
 
-## Equipment toggles
-[equipment] disableNetheriteHammer and disableDpsGenerator default to true for CIVILIZED. Set either to false to allow that equipment. Restart after edits. The accompanying KubeJS recipe/JEI scripts now honor these toggles; older unconditional pack scripts must also be replaced. Client JEI visibility follows the client config, while server enforcement follows the server config. Re-enabling does not restore previously removed items/entities.
+## Pack equipment rules (1.5.1)
+Equipment restrictions no longer belong to the combat jar. See [optional KubeJS pack extras](../pack-extras/README.md). Existing CIVILIZED restrictions are retained by those scripts, with independent JSON toggles and no dependency on the combat mod.
 
 ## Optional advanced armor (1.2.1)
 See ARMOR.md. With advancedArmor enabled, mapped projectile/vehicle combinations replace the native armor modifier output. Unknown sources and vehicles retain native armor. The compatibility baseline measurements above describe advancedArmor disabled.

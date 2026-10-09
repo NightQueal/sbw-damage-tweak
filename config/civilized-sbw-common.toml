@@ -27,12 +27,6 @@
 	#Exact SBW vehicle ID = additional incoming-damage multiplier. Applies only to compatibility-handled CBC direct/blast and TACZ blast hits; SBW's own weapons are unchanged.
 	vehicleMultipliers = []
 
-[equipment]
-	#Set false to allow the Netherite Hammer.
-	disableNetheriteHammer = true
-	#Set false to allow the DPS Generator and deployer.
-	disableDpsGenerator = true
-
 [armor]
 	mountedWeaponArmor = true
 	advancedArmor = false

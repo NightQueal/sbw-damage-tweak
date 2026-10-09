@@ -286,3 +286,8 @@ There are 24 ammo-class defaults and 5 weapon/ammo overrides, all configurable g
 
 Validation: all 20 Forge GameTests passed, including real mounted AP firing, factory metadata capture, selected ammo/weapon/seat switching, mounted ammo scan, native CustomExplosion armor with no duplicate damage, and existing TACZ/CBC tests. The client overlay selection compiles; in-game visual positioning has not been manually checked.
 
+
+## 1.5.1 - combat scope
+The jar no longer disables equipment. Independent KubeJS pack scripts retain the CIVILIZED Hammer/DPS restrictions. See [pack extras](../pack-extras/README.md). CBC profiles cover solid shot (140 mm at 3 blocks/tick), AP shot (260 mm at 3), AP shell (220 mm at 3), AP autocannon (35 mm at 2), plus HE/shrapnel/flak/mortar direct and blast profiles. Kinetic penetration follows actual projectile speed; unknown projectiles retain native armor. These are configurable gameplay defaults, not measured ballistics.
+
+1.5.1 validation: all 20 integration tests passed with external equipment bans enabled and again disabled. The production jar was checked to contain no equipment settings or inventory/entity cleanup handlers.

@@ -7,7 +7,7 @@ Project type: Mods
 Loader: Forge
 Minecraft version: 1.20.1
 License: MIT
-File: civilized-sbw-compat-1.5.0.jar
+File: civilized-sbw-compat-1.5.1.jar
 File type: Beta (full-pack multiplayer balance has not been validated)
 Environment: Client and server
 
@@ -20,7 +20,7 @@ SBW Damage Tweak improves vehicle damage compatibility between Superb Warfare, T
 - Prevents repeated direct hits from one cannon projectile on the same vehicle, with a configurable toggle.
 - Provides global, per-gun/projectile, and per-vehicle damage multipliers. Defaults are 1.0.
 
-This build was made for the CIVILIZED pack and also disables obtaining/using Superb Warfare's Netherite Hammer and DPS Generator. Both restrictions can be disabled independently in the equipment configuration section.
+This is a combat-only mod. It includes no equipment bans, crafting restrictions, or inventory/entity cleanup. CIVILIZED equipment rules are available separately as optional KubeJS pack scripts.
 
 Requires Forge 1.20.1, Superb Warfare 0.8.9.1, TACZ 1.1.8, and Create Big Cannons 5.11.3, plus their normal dependencies. Add these three mods as required dependencies in the project relations.
 
@@ -50,3 +50,8 @@ The GitHub repository is private; do not advertise it as a publicly accessible s
 - Added gun and ammunition attachment vehicle tooltips, Shift details and server profile synchronization.
 - Existing armor JSON receives a new attachments section while preserving prior values.
 - Build and fourteen isolated integration tests passed with Explosion Overhaul. Client tooltip appearance/full multiplayer balance need play testing.
+
+## 1.5.1 changelog
+- Removed equipment bans and their configuration from the combat jar.
+- Moved CIVILIZED restrictions into independent optional KubeJS scripts with JSON toggles, recipes, JEI hiding, use/spawn checks and inventory cleanup once per second.
+- Existing mapped TACZ, CBC and SBW mounted damage and inspection behavior is retained.
