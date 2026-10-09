@@ -868,5 +868,42 @@
       "blastPenetration": 2,
       "blastLeak": 0
     }
+  },
+  "attachments": {
+    "tacz:ammo_mod_fmj": {
+      "type": "FMJ",
+      "penetrationMultiplier": 1.35,
+      "blastPenetrationMultiplier": 1,
+      "normalizationAdd": 3,
+      "postPenMultiplier": 1
+    },
+    "tacz:ammo_mod_hp": {
+      "type": "HP",
+      "penetrationMultiplier": 0.45,
+      "blastPenetrationMultiplier": 1,
+      "normalizationAdd": 0,
+      "postPenMultiplier": 1
+    },
+    "tacz:ammo_mod_i": {
+      "type": "INCENDIARY",
+      "penetrationMultiplier": 0.85,
+      "blastPenetrationMultiplier": 1,
+      "normalizationAdd": 0,
+      "postPenMultiplier": 1
+    },
+    "tacz:ammo_mod_he": {
+      "type": "HE",
+      "penetrationMultiplier": 0.6,
+      "blastPenetrationMultiplier": 3,
+      "normalizationAdd": 0,
+      "postPenMultiplier": 1
+    },
+    "tacz:ammo_mod_slug": {
+      "type": "FMJ",
+      "penetrationMultiplier": 1.2,
+      "blastPenetrationMultiplier": 1,
+      "normalizationAdd": 0,
+      "postPenMultiplier": 1
+    }
   }
 }

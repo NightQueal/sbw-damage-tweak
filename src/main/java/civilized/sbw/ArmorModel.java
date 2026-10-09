@@ -80,7 +80,7 @@ public final class ArmorModel {
   if(!CompatConfig.ADVANCED_ARMOR.get()||entity.level().isClientSide||!(entity instanceof VehicleEntity vehicle))return null;
   Entity projectile=source.getDirectEntity();if(!(projectile instanceof Projectile))return null;
   ArmorProfiles.Vehicle profile=ArmorProfiles.vehicle(DamageCompatibility.id(entity));
-  ArmorProfiles.Ammo ammo=ArmorProfiles.ammo(ammoKey(projectile));if(profile==null||ammo==null)return null;
+  ArmorProfiles.Ammo ammo=ArmorProfiles.modified(ArmorProfiles.ammo(ammoKey(projectile)),projectile.getPersistentData().getString("civilized_sbw_ammo_attachment"));if(profile==null||ammo==null)return null;
   boolean blast=source instanceof AttributedDamageSource attributed&&attributed.blast;
   Vec3 flight=projectile.getDeltaMovement().normalize();
   Vec3 direction=flight;

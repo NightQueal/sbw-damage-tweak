@@ -1,4 +1,4 @@
-# SBW damage compatibility 1.2.1
+# SBW damage compatibility 1.3.0
 
 This release replaces the archived broad damage profiles with scoped compatibility corrections. SBW's own weapons, vehicle recipes and armor definitions are unchanged.
 
@@ -50,3 +50,5 @@ Source references:
 
 ## Optional advanced armor (1.2.1)
 See ARMOR.md. With advancedArmor enabled, mapped projectile/vehicle combinations replace the native armor modifier output. Unknown sources and vehicles retain native armor. The compatibility baseline measurements above describe advancedArmor disabled.
+
+Version 1.3.0 adds attachment-aware penetration and server-synchronized gun/ammunition tooltips; see ARMOR.md. Both client and server must update together.

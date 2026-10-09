@@ -1,4 +1,4 @@
-# Experimental armor model (1.2.1)
+# Experimental armor model (1.3.0)
 
 Enable [armor] advancedArmor in config/civilized-sbw-common.toml. It is false by default in the public jar; the CIVILIZED test instance enables it. Turning it off restores native armor. ricochets and componentHits are independent switches. Restart after edits.
 
@@ -66,3 +66,25 @@ Operator command: /sbwcompat armor scan. Writes config/civilized-sbw-armor-scan.
 TACZ gun damage is already included: the actual shot's damage arriving at SBW is the input to armor (including adjustments TACZ applied before hurt). Profiles determine penetration, not a replacement gun damage number. Explosion correction uses TACZ's configured blast damage. Two guns using the same ammo profile can deal different post-penetration damage. Gun-specific penetration/warhead differences use gun: overrides. Report damage/speed values are base gun definitions, not a promise about attachment/Lua/event-modified shots.
 
 1.2.1 validation: twelve integration tests passed, including execution of the registered command, report file creation, rejection of a non-operator command source, loaded gun/vehicle mapping detection and proportional preservation of incoming shot damage.
+
+## Ammunition attachments and tooltips (1.3.0)
+
+A TACZ bullet snapshots the installed extended-magazine ammunition attachment when the actual bullet constructor runs. Swapping guns or attachments after firing cannot change an in-flight round. Gun-specific profiles still take precedence over ammo profiles; the attachment then modifies that selected profile. Unknown attachments leave it unchanged. HEAT warheads keep their existing profile. TACZ damage/speed/explosion modifiers remain TACZ's responsibility and are not applied a second time.
+
+The new `attachments` map in `config/civilized-sbw-armor.json` accepts exact TACZ attachment IDs, including third-party IDs. Existing configs without this section receive only the new section at startup, preserving vehicle and ammunition values. An explicit empty map disables attachment adjustments. Fields are type, penetrationMultiplier, blastPenetrationMultiplier, normalizationAdd and postPenMultiplier. These are gameplay estimates, not measured ballistics.
+
+| Attachment | Penetration | Normalization | Blast penetration | Type |
+|---|---:|---:|---:|---|
+| FMJ | x1.35 | +3 degrees | x1 | FMJ |
+| Hollow-point | x0.45 | unchanged | x1 | HP |
+| Incendiary | x0.85 | unchanged | x1 | INCENDIARY |
+| Explosive | x0.60 | unchanged | x3 | HE |
+| Slug | x1.20 | unchanged | x1 | FMJ |
+
+No extra burn damage, spall, ammo-rack detonation or visible projectile bounce is added. Incendiary ignition uses TACZ behavior. Explosion damage/radius come from the gun pack. Default TACZ profiles retain fixed penetration with range; optional referenceSpeed still uses actual impact velocity.
+
+Gun tooltips show effective ammunition type and nominal direct/blast penetration. Hold Shift for normalization, ricochet thresholds, overmatch, blocked-blast leakage, engine behavior, range behavior, TACZ attachment-adjusted damage bands/launch speed/blast and hull-side examples for Truck, BMP-2 and M1A2 at 0/30/60 degrees. Examples are percentages of incoming direct damage for non-ricochet hits, not guaranteed final HP loss. Shooter scripts, cover, pellet splitting, actual engine intersections and compatibility scaling can alter results. The existing TACZ attachment tooltip is extended with vehicle profile multipliers and available native damage/speed/range/RPM modifiers. Other accessories keep TACZ's existing tooltip.
+
+Armor profiles and active armor/ricochet/component switches are synchronized from the server once at login. Clients do not use their own armor JSON for connected-server tooltips. Disconnect clears the snapshot; restart/reconnect after configuration edits. Before joining a world, a tooltip asks the player to connect for settings. Both client and server require 1.3.0 for this network channel; update both together.
+
+Validation: build and fourteen isolated Forge game tests passed with Explosion Overhaul, including the actual TACZ constructor capturing FMJ, preservation after unloading, unchanged TACZ damage, FMJ penetration versus hollow-point rejection, HE/HEAT distinctions, unknown attachment fallback, shared-profile immutability and profile packet round-trip. Tests now run in separate batches to prevent their temporary global config switches interfering. Tooltip appearance and full-pack multiplayer combat have not been visually/play tested.

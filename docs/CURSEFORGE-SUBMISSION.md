@@ -7,7 +7,7 @@ Project type: Mods
 Loader: Forge
 Minecraft version: 1.20.1
 License: MIT
-File: civilized-sbw-compat-1.2.1.jar
+File: civilized-sbw-compat-1.3.0.jar
 File type: Beta (full-pack multiplayer balance has not been validated)
 Environment: Client and server
 
@@ -43,3 +43,10 @@ Eleven isolated integration tests passed with and without Explosion Overhaul. Fu
 ## Submission notes
 
 The GitHub repository is private; do not advertise it as a publicly accessible source or issue tracker. Upload only the distributable jar from dist/, not the repository or its test fixtures. CurseForge may require a project avatar and an authenticated author account. The submitted project/file must pass CurseForge moderation before being available to users.
+
+## 1.3.0 changelog
+- Added configurable attachment-aware penetration for TACZ FMJ, HP, incendiary, HE and slug ammunition modifications.
+- Captures the ammunition attachment at firing; TACZ damage is preserved without double application.
+- Added gun and ammunition attachment vehicle tooltips, Shift details and server profile synchronization.
+- Existing armor JSON receives a new attachments section while preserving prior values.
+- Build and fourteen isolated integration tests passed with Explosion Overhaul. Client tooltip appearance/full multiplayer balance need play testing.

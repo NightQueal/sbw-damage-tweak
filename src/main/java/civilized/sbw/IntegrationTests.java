@@ -50,7 +50,7 @@ public final class IntegrationTests {
  private static float taczBlast(GameTestHelper h,VehicleEntity v,EntityKineticBullet p) {
   float before=v.getHealth();com.tacz.guns.util.ExplodeUtil.createExplosion(p.getOwner(),p,120,3,false,false,p.position());return before-v.getHealth();
  }
- @GameTest(template="empty",timeoutTicks=60)
+ @GameTest(template="empty",timeoutTicks=60,batch="taczExplosionCompatibility")
  public static void taczExplosionCompatibility(GameTestHelper h) {
   var v=vehicle(h,"m_1a_2");h.runAtTickTime(8,()->{
    var p=rocket(h,v);float exposure=CustomExplosion.getSeenPercentOptimized(h.getLevel(),p.position(),v);
@@ -62,7 +62,7 @@ public final class IntegrationTests {
    v.discard();h.succeed();
   });
  }
- @GameTest(template="empty",timeoutTicks=60)
+ @GameTest(template="empty",timeoutTicks=60,batch="cbcDirectAttributionAndBalance")
  public static void cbcDirectAttributionAndBalance(GameTestHelper h) {
   var v=vehicle(h,"m_1a_2");var p=cannon(h,"shot");p.setPos(v.position().add(0,1,6));
   CompatConfig.CBC_ATTRIBUTION.set(false);var old=direct(p,v);v.hurt(old,30);require(v.getHealth()==250,"Native unattributed CBC shot unexpectedly damaged untouched tank");
@@ -74,7 +74,7 @@ public final class IntegrationTests {
   var owner=net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());p.setOwner(owner);source=direct(p,v);require(source.getEntity()==owner,"Known CBC owner not retained");require(source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_ARMOR)==old.is(net.minecraft.tags.DamageTypeTags.BYPASSES_ARMOR),"CBC armor flag lost");
   System.out.println("COMPAT_TEST CBC solid native=0 fixed="+basic+" multiplier2="+tuned);v.discard();h.succeed();
  }
- @GameTest(template="empty",timeoutTicks=60)
+ @GameTest(template="empty",timeoutTicks=60,batch="cbcShellExplosion")
  public static void cbcShellExplosion(GameTestHelper h) {
   var v=vehicle(h,"m_1a_2");h.runAtTickTime(8,()->{
    var p=cannon(h,"he_shell");p.setPos(v.position().add(0,3,0));
@@ -88,12 +88,12 @@ public final class IntegrationTests {
    System.out.println("COMPAT_TEST CBC HE native="+nativeLoss+" fixed="+loss+" multiplier2="+tuned);v.discard();h.succeed();
   });
  }
- @GameTest(template="empty",timeoutTicks=80)
+ @GameTest(template="empty",timeoutTicks=80,batch="realCbcFlight")
  public static void realCbcFlight(GameTestHelper h) {
   var v=vehicle(h,"m_1a_2");h.runAtTickTime(8,()->{var p=cannon(h,"ap_shot");p.setPos(v.position().add(0,7,0));p.setDeltaMovement(0,-3,0);h.getLevel().addFreshEntity(p);});
   h.runAtTickTime(24,()->{float loss=250-v.getHealth();System.out.println("COMPAT_TEST CBC AP actual flight healthLoss="+loss);require(loss>0&&loss<10,"Actual CBC AP shot flight failed or native armor bypassed: "+loss);v.discard();h.succeed();});
  }
- @GameTest(template="empty",timeoutTicks=40)
+ @GameTest(template="empty",timeoutTicks=40,batch="nativeArmorAndScope")
  public static void nativeArmorAndScope(GameTestHelper h) {
   var v=vehicle(h,"m_1a_2");h.runAtTickTime(8,()->{var p=cannon(h,"ap_shot");p.setPos(v.position().add(0,1,6));var front=direct(p,v);var scripted=new com.atsuishio.superbwarfare.entity.vehicle.damage.DamageModifier().reduce(20).multiply(.2f).custom((entity,source,damage)->((VehicleEntity)entity).getSourceAngle(source,.3f)*damage);float a=scripted.compute(v,front,50);p.setPos(v.position().add(0,1,-6));float b=scripted.compute(v,direct(p,v),50);System.out.println("COMPAT_TEST directional raw="+v.getSourceAngle(front,.3f)+" front="+a+" rear="+b);require(Math.abs(a-b)>1,"Directional armor lost: "+a+" / "+b);
   var holder=h.getLevel().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(ResourceKey.create(Registries.DAMAGE_TYPE,new ResourceLocation("tacz:bullet")));
@@ -102,7 +102,7 @@ public final class IntegrationTests {
   CompatConfig.VEHICLE_OVERRIDES.set(java.util.List.of("superbwarfare:m_1a_2=0.0"));v.setHealth(250);v.hurt(direct(p,v),50);require(v.getHealth()==250,"Per-vehicle disable failed");CompatConfig.VEHICLE_OVERRIDES.set(java.util.List.of());
   System.out.println("COMPAT_TEST CBC AP directional native armor="+a+" / "+b);v.discard();h.succeed();});
  }
- @GameTest(template="empty",timeoutTicks=40)
+ @GameTest(template="empty",timeoutTicks=40,batch="resourceRules")
  public static void resourceRules(GameTestHelper h) {
   var tag=TagKey.create(Registries.ITEM,new ResourceLocation("forge:ingots/tungsten"));
   require(!new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("superbwarfare:tungsten_ingot"))).is(tag)&&new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("northstar:tungsten_ingot"))).is(tag),"Tungsten separation broken");
@@ -111,7 +111,7 @@ public final class IntegrationTests {
   for(String id:new String[]{"superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"}) {boolean disabled=id.endsWith("hammer")?CompatConfig.DISABLE_HAMMER.get():CompatConfig.DISABLE_DPS.get();require(recipes.byKey(new ResourceLocation(id)).isPresent()!=disabled,"Recipe toggle failed "+id);}
   var dps=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare:dps_generator")).create(h.getLevel());require(h.getLevel().addFreshEntity(dps)!=CompatConfig.DISABLE_DPS.get(),"DPS spawn toggle failed");dps.discard();h.succeed();
  }
- @GameTest(template="empty",timeoutTicks=40)
+ @GameTest(template="empty",timeoutTicks=40,batch="equipmentToggles")
  public static void equipmentToggles(GameTestHelper h) {
   boolean hammerWas=CompatConfig.DISABLE_HAMMER.get(),dpsWas=CompatConfig.DISABLE_DPS.get();
   try {
@@ -130,7 +130,7 @@ public final class IntegrationTests {
   } finally {CompatConfig.DISABLE_HAMMER.set(hammerWas);CompatConfig.DISABLE_DPS.set(dpsWas);}
   h.succeed();
  }
- @GameTest(template="empty",timeoutTicks=40)
+ @GameTest(template="empty",timeoutTicks=40,batch="armorMathAndGeometry")
  public static void armorMathAndGeometry(GameTestHelper h) {
   var ap=ArmorProfiles.ammo("entity:createbigcannons:ap_shot");
   var flat=ArmorModel.resolve(ap,50,100,1,0,3,.99,false,false);
@@ -151,7 +151,7 @@ public final class IntegrationTests {
   require(ArmorModel.intersect(box,new net.minecraft.world.phys.Vec3(0,10,10),new net.minecraft.world.phys.Vec3(0,0,-1),20)==null,"OBB miss became a hit");
   h.succeed();
  }
- @GameTest(template="empty",timeoutTicks=60)
+ @GameTest(template="empty",timeoutTicks=60,batch="vehicleArmorAndEngine")
  public static void vehicleArmorAndEngine(GameTestHelper h) {
   var v=vehicle(h,"m_1a_2");h.runAtTickTime(8,()->{
    boolean old=CompatConfig.ADVANCED_ARMOR.get();
@@ -170,7 +170,7 @@ public final class IntegrationTests {
   });
  }
 
- @GameTest(template="empty",timeoutTicks=60)
+ @GameTest(template="empty",timeoutTicks=60,batch="taczArmorAndShapedCharge")
  public static void taczArmorAndShapedCharge(GameTestHelper h) {
   var v=vehicle(h,"m_1a_2");var light=vehicle(h,"truck");h.runAtTickTime(8,()->{
    boolean old=CompatConfig.ADVANCED_ARMOR.get();
@@ -198,7 +198,7 @@ public final class IntegrationTests {
   });
  }
 
- @GameTest(template="empty",timeoutTicks=80)
+ @GameTest(template="empty",timeoutTicks=80,batch="advancedCbcFlight")
  public static void advancedCbcFlight(GameTestHelper h) {
   var v=vehicle(h,"m_1a_2");boolean old=CompatConfig.ADVANCED_ARMOR.get();
   h.runAtTickTime(30,()->{CompatConfig.ADVANCED_ARMOR.set(true);var p=cannon(h,"ap_shot");p.setPos(v.position().add(0,7,0));p.setDeltaMovement(0,-3,0);h.getLevel().addFreshEntity(p);});
@@ -209,7 +209,7 @@ public final class IntegrationTests {
   });
  }
 
- @GameTest(template="empty",timeoutTicks=40)
+ @GameTest(template="empty",timeoutTicks=40,batch="armorScanReport")
  public static void armorScanReport(GameTestHelper h) {
   try {
    var commands=h.getLevel().getServer().getCommands().getDispatcher();
@@ -230,6 +230,42 @@ public final class IntegrationTests {
     require(first>0&&Math.abs(second-first*2)<.01,"Incoming gun/shot damage not retained by armor");
    } finally {CompatConfig.ADVANCED_ARMOR.set(old);v.discard();}h.succeed();
   });
+ }
+
+ @GameTest(template="empty",timeoutTicks=40,batch="attachmentPenetration")
+ public static void attachmentPenetration(GameTestHelper h) {
+  var base=ArmorProfiles.ammo("ammo:tacz:50bmg");require(base!=null,"Missing .50 profile");
+  var fmj=ArmorProfiles.modified(base,"tacz:ammo_mod_fmj");var hp=ArmorProfiles.modified(base,"tacz:ammo_mod_hp");var he=ArmorProfiles.modified(base,"tacz:ammo_mod_he");
+  require(Math.abs(fmj.penetration-33.75)<.001&&Math.abs(hp.penetration-11.25)<.001,"Attachment penetration incorrect");
+  require(base.penetration==25&&base.normalization==0,"Attachment mutated shared base profile");
+  require(ArmorModel.resolve(fmj,55.8,33,1,0,0,1,false,true).damage()>0,"FMJ cannot penetrate BMP front");
+  require(ArmorModel.resolve(hp,80.6,16,1,0,0,1,false,true).damage()==0,"HP damage bypassed blocked plate");
+  require(he.type.equals("HE")&&he.blastPenetration==6,"Explosive attachment not mapped separately");
+  var heat=ArmorProfiles.ammo("gun:tacz:rpg7");require(ArmorProfiles.modified(heat,"tacz:ammo_mod_hp")==heat,"Attachment changed rocket shaped charge");
+  require(ArmorProfiles.modified(base,"test:unknown")==base,"Unknown attachment changed base profile");
+  var copy=new com.google.gson.Gson().fromJson(ArmorProfiles.json(),ArmorProfiles.Data.class);
+  require(ArmorProfiles.modified(copy.ammunition.get("ammo:tacz:50bmg"),"tacz:ammo_mod_hp",copy).penetration==hp.penetration,"Synced tooltip profile differs from server");
+  var original=new ProfileSync.Snapshot(ArmorProfiles.json(),true,false,true);
+  var buffer=new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+  try {original.write(buffer);require(ProfileSync.Snapshot.read(buffer).equals(original),"Server tooltip settings did not round-trip");}finally{buffer.release();}
+  h.succeed();
+ }
+ @GameTest(template="empty",timeoutTicks=40,batch="attachmentCapturedAtFire")
+ public static void attachmentCapturedAtFire(GameTestHelper h) {
+  var id=new ResourceLocation("tacz:m107");var index=com.tacz.guns.api.TimelessAPI.getCommonGunIndex(id).orElseThrow();
+  var stack=com.tacz.guns.api.item.builder.GunItemBuilder.create().setId(id).setFireMode(com.tacz.guns.api.item.gun.FireMode.SEMI).putAttachment(com.tacz.guns.api.item.attachment.AttachmentType.EXTENDED_MAG,new ResourceLocation("tacz:ammo_mod_fmj")).build();
+  var shooter=net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());shooter.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stack);
+  var attachmentIndex=com.tacz.guns.api.TimelessAPI.getCommonAttachmentIndex(new ResourceLocation("tacz:ammo_mod_fmj")).orElseThrow();
+  var damageModifier=attachmentIndex.getData().getModifier().get("damage");
+  require(damageModifier!=null&&damageModifier.getValue() instanceof com.tacz.guns.resource.pojo.data.attachment.Modifier,"Tooltip cannot read attachment damage modifier");
+  var cache=new com.tacz.guns.resource.modifier.AttachmentCacheProperty();cache.eval(stack,index.getGunData());
+  com.tacz.guns.api.entity.IGunOperator.fromLivingEntity(shooter).updateCacheProperty(cache);
+  var p=new EntityKineticBullet(h.getLevel(),shooter,stack,index.getGunData().getAmmoId(),id,new ResourceLocation("tacz:default"),false,index.getGunData(),index.getBulletData());
+  require(p.getPersistentData().getString("civilized_sbw_ammo_attachment").equals("tacz:ammo_mod_fmj"),"Actual TACZ constructor did not capture attachment");
+  com.tacz.guns.api.item.IGun.getIGunOrNull(stack).unloadAttachment(stack,com.tacz.guns.api.item.attachment.AttachmentType.EXTENDED_MAG);
+  require(p.getPersistentData().getString("civilized_sbw_ammo_attachment").equals("tacz:ammo_mod_fmj"),"In-flight ammunition changed after gun modification");
+  require(Math.abs(p.getDamage(p.position())-45)<.01,"TACZ FMJ damage changed/doubled: "+p.getDamage(p.position()));
+  shooter.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,ItemStack.EMPTY);h.succeed();
  }
 
 }
