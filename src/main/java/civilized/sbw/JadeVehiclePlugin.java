@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 @WailaPlugin("civilized_sbw")
 public final class JadeVehiclePlugin implements IWailaPlugin {
- @Override public void registerClient(IWailaClientRegistration registration){registration.registerEntityComponent(new Provider(),VehicleEntity.class);}
+ @Override public void registerClient(IWailaClientRegistration registration){registration.registerEntityComponent(new Provider(),VehicleEntity.class);registration.markAsClientFeature(new ResourceLocation("civilized_sbw","vehicle_armor"));LongRangeVehicleInspection.register(registration);}
  public static final class Provider implements IEntityComponentProvider {
   @Override public ResourceLocation getUid(){return new ResourceLocation("civilized_sbw","vehicle_armor");}
   @Override public void appendTooltip(ITooltip tooltip,EntityAccessor accessor,IPluginConfig config) {

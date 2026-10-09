@@ -49,3 +49,6 @@
  penetrationPitch = 1.3
  blockedPitch = 0.8
  ricochetPitch = 1.8
+
+[inspection]
+ vehicleRange = 200.0

@@ -115,3 +115,14 @@ Validation adds result classification, duplicate/rate-limit checks, sound regist
 
 ## Diagram spacing (1.3.4)
 Added ten pixels of vertical space before the vehicle stat rows. This moves them clear of TACZ's final Weight row and expands the panel/button offset together. No damage or penetration values change.
+
+## Gun tuning and long-range inspection (1.4.0)
+Added 132 exact gun-ID defaults for pack guns using already mapped ammunition. [GUN-TUNING.md](GUN-TUNING.md) records each speed, reference and final penetration. Caliber baselines remain unchanged. Speed-based multipliers are bounded to 0.70-1.25; the values remain fixed penetration estimates, not newly enabled distance/velocity loss. Identical ammunition and speed can intentionally give identical penetration despite different damage. Excaliber and the two radius-6 M320 grenade launchers receive 15 mm blast penetration; rocket HEAT profiles remain unchanged. Attachments still apply after the gun override.
+
+Existing configs receive only missing bundled gun keys at startup; existing gun, ammo, vehicle and attachment entries are preserved. Set includeDefaultGunProfiles=false in armor JSON to disable automatic additions and manually remove overrides to restore ammo fallback.
+
+Jade extends vehicle-only aim inspection to 200 blocks while holding a TACZ gun. [inspection] vehicleRange in the client common config accepts 16-256. Uses loaded/tracked vehicles, actual OBBs and solid-block occlusion; no entity or chunk loading, weapon range change, interaction reach extension or damage changes. Detail-key behavior is unchanged. Unloaded/untracked vehicles cannot be inspected. Server tracking/view distance must make the vehicle available to the client.
+
+Validation adds gun-profile migration, Excaliber blast tuning, Uzi versus Glock penetration, preservation of RPG override, a vehicle inspection at 150 blocks, configured distance rejection and stone-wall occlusion. Client Jade presentation still needs an in-game check.
+
+Distant accessors use client-only data to avoid repeated out-of-range Jade server requests; normal nearby vehicle accessors are preserved. Seventeen integration tests passed.

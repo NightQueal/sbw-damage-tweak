@@ -1,0 +1,1061 @@
+{
+  "method": "Ammo baseline * clamp((gun-pack speed / same-ammo reference speed)^1.43, 0.70, 1.25). Fixed per-gun estimates, no impact-speed scaling added. Built-in radius-6 explosive guns receive 15 mm blast penetration. Existing gun overrides preserved.",
+  "guns": [
+    {
+      "gun": "maxstuff:1851_navy",
+      "ammo": "tacz:357mag",
+      "speed": 200,
+      "referenceSpeed": 200,
+      "penetration": 4.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:adar2",
+      "ammo": "tacz:556x45",
+      "speed": 275,
+      "referenceSpeed": 270,
+      "penetration": 8.21,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:af2011",
+      "ammo": "tacz:45acp",
+      "speed": 170,
+      "referenceSpeed": 180,
+      "penetration": 1.84,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ai_awp",
+      "ammo": "tacz:308",
+      "speed": 350,
+      "referenceSpeed": 320,
+      "penetration": 13.64,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ai_aws",
+      "ammo": "tacz:308",
+      "speed": 660,
+      "referenceSpeed": 320,
+      "penetration": 15.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ak108",
+      "ammo": "tacz:556x45",
+      "speed": 240,
+      "referenceSpeed": 270,
+      "penetration": 6.76,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ak109",
+      "ammo": "tacz:762x39",
+      "speed": 240,
+      "referenceSpeed": 250,
+      "penetration": 7.55,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ak15",
+      "ammo": "tacz:762x39",
+      "speed": 240,
+      "referenceSpeed": 250,
+      "penetration": 7.55,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ak19",
+      "ammo": "tacz:556x45",
+      "speed": 240,
+      "referenceSpeed": 270,
+      "penetration": 6.76,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ak308",
+      "ammo": "tacz:308",
+      "speed": 240,
+      "referenceSpeed": 320,
+      "penetration": 8.4,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ak63e",
+      "ammo": "tacz:762x39",
+      "speed": 240,
+      "referenceSpeed": 250,
+      "penetration": 7.55,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ak_alpha",
+      "ammo": "tacz:762x39",
+      "speed": 270,
+      "referenceSpeed": 250,
+      "penetration": 8.93,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ak_delta",
+      "ammo": "tacz:762x39",
+      "speed": 240,
+      "referenceSpeed": 250,
+      "penetration": 7.55,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ar10",
+      "ammo": "tacz:308",
+      "speed": 265,
+      "referenceSpeed": 320,
+      "penetration": 9.16,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ar10b",
+      "ammo": "tacz:308",
+      "speed": 265,
+      "referenceSpeed": 320,
+      "penetration": 9.16,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ar57",
+      "ammo": "tacz:57x28",
+      "speed": 265,
+      "referenceSpeed": 287.5,
+      "penetration": 4.45,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ar762",
+      "ammo": "tacz:762x39",
+      "speed": 240,
+      "referenceSpeed": 250,
+      "penetration": 7.55,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:aug_a2",
+      "ammo": "tacz:556x45",
+      "speed": 295,
+      "referenceSpeed": 270,
+      "penetration": 9.08,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:aug_a3",
+      "ammo": "tacz:556x45",
+      "speed": 295,
+      "referenceSpeed": 270,
+      "penetration": 9.08,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:aug_a3_para",
+      "ammo": "tacz:9mm",
+      "speed": 295,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:aug_hbar",
+      "ammo": "tacz:556x45",
+      "speed": 295,
+      "referenceSpeed": 270,
+      "penetration": 9.08,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:blicky",
+      "ammo": "tacz:50bmg",
+      "speed": 150,
+      "referenceSpeed": 400,
+      "penetration": 17.5,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:brn10",
+      "ammo": "tacz:308",
+      "speed": 265,
+      "referenceSpeed": 320,
+      "penetration": 9.16,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:c96",
+      "ammo": "tacz:9mm",
+      "speed": 170,
+      "referenceSpeed": 150,
+      "penetration": 3.59,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:colt_933",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:cursed15",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:db_50",
+      "ammo": "tacz:50bmg",
+      "speed": 400,
+      "referenceSpeed": 400,
+      "penetration": 25.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:db_short_tactical",
+      "ammo": "tacz:12g",
+      "speed": 120,
+      "referenceSpeed": 140.0,
+      "penetration": 1.6,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:deagle_12g",
+      "ammo": "tacz:12g",
+      "speed": 130,
+      "referenceSpeed": 140.0,
+      "penetration": 1.8,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:deagle_50bmg",
+      "ammo": "tacz:50bmg",
+      "speed": 400,
+      "referenceSpeed": 400,
+      "penetration": 25.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:excaliber",
+      "ammo": "tacz:50bmg",
+      "speed": 400,
+      "referenceSpeed": 400,
+      "penetration": 25.0,
+      "blastPenetration": 15
+    },
+    {
+      "gun": "maxstuff:g36",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:genesis12",
+      "ammo": "tacz:12g",
+      "speed": 265,
+      "referenceSpeed": 140.0,
+      "penetration": 2.5,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:glock_18c",
+      "ammo": "tacz:9mm",
+      "speed": 150,
+      "referenceSpeed": 150,
+      "penetration": 3.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:glock_bulpup",
+      "ammo": "tacz:9mm",
+      "speed": 150,
+      "referenceSpeed": 150,
+      "penetration": 3.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:gm6_lynx",
+      "ammo": "tacz:50bmg",
+      "speed": 400,
+      "referenceSpeed": 400,
+      "penetration": 25.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:hk416c",
+      "ammo": "tacz:556x45",
+      "speed": 290,
+      "referenceSpeed": 270,
+      "penetration": 8.86,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:hk417",
+      "ammo": "tacz:308",
+      "speed": 789,
+      "referenceSpeed": 320,
+      "penetration": 15.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:hk_g33",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:hk_mp5k",
+      "ammo": "tacz:9mm",
+      "speed": 180,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:hk_mp5sd",
+      "ammo": "tacz:9mm",
+      "speed": 210,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:luty",
+      "ammo": "tacz:9mm",
+      "speed": 180,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:m16a2",
+      "ammo": "tacz:556x45",
+      "speed": 275,
+      "referenceSpeed": 270,
+      "penetration": 8.21,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:m16a3",
+      "ammo": "tacz:556x45",
+      "speed": 275,
+      "referenceSpeed": 270,
+      "penetration": 8.21,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:m17",
+      "ammo": "tacz:9mm",
+      "speed": 150,
+      "referenceSpeed": 150,
+      "penetration": 3.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:m1_garand",
+      "ammo": "tacz:30_06",
+      "speed": 380,
+      "referenceSpeed": 370.0,
+      "penetration": 13.51,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:m1_garand_tac",
+      "ammo": "tacz:308",
+      "speed": 380,
+      "referenceSpeed": 320,
+      "penetration": 15.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:m231",
+      "ammo": "tacz:556x45",
+      "speed": 275,
+      "referenceSpeed": 270,
+      "penetration": 8.21,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:m320t",
+      "ammo": "tacz:40mm",
+      "speed": 60,
+      "referenceSpeed": 60.0,
+      "penetration": 4.0,
+      "blastPenetration": 15
+    },
+    {
+      "gun": "maxstuff:m82a2",
+      "ammo": "tacz:50bmg",
+      "speed": 400,
+      "referenceSpeed": 400,
+      "penetration": 25.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:m870t",
+      "ammo": "tacz:12g",
+      "speed": 150,
+      "referenceSpeed": 140.0,
+      "penetration": 2.21,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:mini_fix",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:mk11",
+      "ammo": "tacz:308",
+      "speed": 265,
+      "referenceSpeed": 320,
+      "penetration": 9.16,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:mk18",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:mk18_auto",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:mk18_burst",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:mk18_mjolnir",
+      "ammo": "tacz:338",
+      "speed": 300,
+      "referenceSpeed": 400,
+      "penetration": 12.6,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:mk23",
+      "ammo": "tacz:45acp",
+      "speed": 180,
+      "referenceSpeed": 180,
+      "penetration": 2.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:mk47",
+      "ammo": "tacz:762x39",
+      "speed": 240,
+      "referenceSpeed": 250,
+      "penetration": 7.55,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:msr",
+      "ammo": "tacz:30_06",
+      "speed": 350,
+      "referenceSpeed": 370.0,
+      "penetration": 12.01,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:qbz_97",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:quatro15",
+      "ammo": "tacz:556x45",
+      "speed": 285,
+      "referenceSpeed": 270,
+      "penetration": 8.64,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ro635",
+      "ammo": "tacz:9mm",
+      "speed": 265,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:saiga12",
+      "ammo": "tacz:12g",
+      "speed": 130,
+      "referenceSpeed": 140.0,
+      "penetration": 1.8,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:saiga9",
+      "ammo": "tacz:9mm",
+      "speed": 240,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:sap6",
+      "ammo": "tacz:12g",
+      "speed": 130,
+      "referenceSpeed": 140.0,
+      "penetration": 1.8,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:scar_hamr",
+      "ammo": "tacz:556x45",
+      "speed": 300,
+      "referenceSpeed": 270,
+      "penetration": 9.3,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:scar_pdw",
+      "ammo": "tacz:556x45",
+      "speed": 290,
+      "referenceSpeed": 270,
+      "penetration": 8.86,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:sks_golden",
+      "ammo": "tacz:762x39",
+      "speed": 300,
+      "referenceSpeed": 250,
+      "penetration": 10.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:sks_wooden",
+      "ammo": "tacz:762x39",
+      "speed": 300,
+      "referenceSpeed": 250,
+      "penetration": 10.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:sr15",
+      "ammo": "tacz:556x45",
+      "speed": 245,
+      "referenceSpeed": 270,
+      "penetration": 6.96,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:sr16",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:thunderbird",
+      "ammo": "tacz:50ae",
+      "speed": 170,
+      "referenceSpeed": 170.0,
+      "penetration": 4.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:thunderbird_short",
+      "ammo": "tacz:50ae",
+      "speed": 170,
+      "referenceSpeed": 170.0,
+      "penetration": 4.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:udp9",
+      "ammo": "tacz:9mm",
+      "speed": 265,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:ump9",
+      "ammo": "tacz:9mm",
+      "speed": 190,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:vector9",
+      "ammo": "tacz:9mm",
+      "speed": 180,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:vityas",
+      "ammo": "tacz:9mm",
+      "speed": 240,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "maxstuff:xm177",
+      "ammo": "tacz:556x45",
+      "speed": 265,
+      "referenceSpeed": 270,
+      "penetration": 7.79,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:aa12",
+      "ammo": "tacz:12g",
+      "speed": 130,
+      "referenceSpeed": 140.0,
+      "penetration": 1.8,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:ai_awp",
+      "ammo": "tacz:338",
+      "speed": 575,
+      "referenceSpeed": 400,
+      "penetration": 22.5,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:ak47",
+      "ammo": "tacz:762x39",
+      "speed": 250,
+      "referenceSpeed": 250,
+      "penetration": 8.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:aug",
+      "ammo": "tacz:556x45",
+      "speed": 295,
+      "referenceSpeed": 270,
+      "penetration": 9.08,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:b93r",
+      "ammo": "tacz:9mm",
+      "speed": 190,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:cz75",
+      "ammo": "tacz:9mm",
+      "speed": 180,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:db_long",
+      "ammo": "tacz:12g",
+      "speed": 150,
+      "referenceSpeed": 140.0,
+      "penetration": 2.21,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:db_short",
+      "ammo": "tacz:12g",
+      "speed": 120,
+      "referenceSpeed": 140.0,
+      "penetration": 1.6,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:deagle",
+      "ammo": "tacz:50ae",
+      "speed": 170,
+      "referenceSpeed": 170.0,
+      "penetration": 4.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:deagle_golden",
+      "ammo": "tacz:357mag",
+      "speed": 200,
+      "referenceSpeed": 200,
+      "penetration": 4.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:fn_evolys",
+      "ammo": "tacz:308",
+      "speed": 280,
+      "referenceSpeed": 320,
+      "penetration": 9.91,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:fn_fal",
+      "ammo": "tacz:308",
+      "speed": 330,
+      "referenceSpeed": 320,
+      "penetration": 12.54,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:g36k",
+      "ammo": "tacz:556x45",
+      "speed": 310,
+      "referenceSpeed": 270,
+      "penetration": 9.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:glock_17",
+      "ammo": "tacz:9mm",
+      "speed": 150,
+      "referenceSpeed": 150,
+      "penetration": 3.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:hk416d",
+      "ammo": "tacz:556x45",
+      "speed": 290,
+      "referenceSpeed": 270,
+      "penetration": 8.86,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:hk_g3",
+      "ammo": "tacz:308",
+      "speed": 270,
+      "referenceSpeed": 320,
+      "penetration": 9.41,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:hk_mk23",
+      "ammo": "tacz:45acp",
+      "speed": 190,
+      "referenceSpeed": 180,
+      "penetration": 2.16,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:hk_mp5a5",
+      "ammo": "tacz:9mm",
+      "speed": 180,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:kar98",
+      "ammo": "tacz:792x57",
+      "speed": 340,
+      "referenceSpeed": 340,
+      "penetration": 13.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:lonetrail",
+      "ammo": "tacz:30_06",
+      "speed": 360,
+      "referenceSpeed": 370.0,
+      "penetration": 12.5,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m1014",
+      "ammo": "tacz:12g",
+      "speed": 150,
+      "referenceSpeed": 140.0,
+      "penetration": 2.21,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m107",
+      "ammo": "tacz:50bmg",
+      "speed": 400,
+      "referenceSpeed": 400,
+      "penetration": 25.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m16a1",
+      "ammo": "tacz:556x45",
+      "speed": 310,
+      "referenceSpeed": 270,
+      "penetration": 9.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m16a4",
+      "ammo": "tacz:556x45",
+      "speed": 310,
+      "referenceSpeed": 270,
+      "penetration": 9.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m1911",
+      "ammo": "tacz:45acp",
+      "speed": 180,
+      "referenceSpeed": 180,
+      "penetration": 2.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m249",
+      "ammo": "tacz:556x45",
+      "speed": 280,
+      "referenceSpeed": 270,
+      "penetration": 8.43,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m320",
+      "ammo": "tacz:40mm",
+      "speed": 60,
+      "referenceSpeed": 60.0,
+      "penetration": 4.0,
+      "blastPenetration": 15
+    },
+    {
+      "gun": "tacz:m4a1",
+      "ammo": "tacz:556x45",
+      "speed": 270,
+      "referenceSpeed": 270,
+      "penetration": 8.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m700",
+      "ammo": "tacz:30_06",
+      "speed": 380,
+      "referenceSpeed": 370.0,
+      "penetration": 13.51,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m870",
+      "ammo": "tacz:12g",
+      "speed": 150,
+      "referenceSpeed": 140.0,
+      "penetration": 2.21,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m95",
+      "ammo": "tacz:50bmg",
+      "speed": 400,
+      "referenceSpeed": 400,
+      "penetration": 25.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:m9a4",
+      "ammo": "tacz:9mm",
+      "speed": 150,
+      "referenceSpeed": 150,
+      "penetration": 3.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:minigun",
+      "ammo": "tacz:308",
+      "speed": 340,
+      "referenceSpeed": 320,
+      "penetration": 13.09,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:mk14",
+      "ammo": "tacz:308",
+      "speed": 310,
+      "referenceSpeed": 320,
+      "penetration": 11.47,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:p320",
+      "ammo": "tacz:45acp",
+      "speed": 170,
+      "referenceSpeed": 180,
+      "penetration": 1.84,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:p90",
+      "ammo": "tacz:57x28",
+      "speed": 310,
+      "referenceSpeed": 287.5,
+      "penetration": 5.57,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:qbz_191",
+      "ammo": "tacz:58x42",
+      "speed": 290,
+      "referenceSpeed": 277.5,
+      "penetration": 8.52,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:qbz_95",
+      "ammo": "tacz:58x42",
+      "speed": 265,
+      "referenceSpeed": 277.5,
+      "penetration": 7.49,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:rhino357",
+      "ammo": "tacz:357mag",
+      "speed": 190,
+      "referenceSpeed": 200,
+      "penetration": 3.72,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:rpk",
+      "ammo": "tacz:762x39",
+      "speed": 270,
+      "referenceSpeed": 250,
+      "penetration": 8.93,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:scar_h",
+      "ammo": "tacz:308",
+      "speed": 320,
+      "referenceSpeed": 320,
+      "penetration": 12.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:scar_l",
+      "ammo": "tacz:556x45",
+      "speed": 290,
+      "referenceSpeed": 270,
+      "penetration": 8.86,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:sks_tactical",
+      "ammo": "tacz:762x39",
+      "speed": 300,
+      "referenceSpeed": 250,
+      "penetration": 10.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:spas_12",
+      "ammo": "tacz:12g",
+      "speed": 150,
+      "referenceSpeed": 140.0,
+      "penetration": 2.21,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:spr15hb",
+      "ammo": "tacz:556x45",
+      "speed": 450,
+      "referenceSpeed": 270,
+      "penetration": 10.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:springfield1873",
+      "ammo": "tacz:45_70",
+      "speed": 233,
+      "referenceSpeed": 233,
+      "penetration": 7.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:taurus500",
+      "ammo": "tacz:500mag",
+      "speed": 250,
+      "referenceSpeed": 250,
+      "penetration": 5.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:taurus943",
+      "ammo": "tacz:22wmr",
+      "speed": 135,
+      "referenceSpeed": 135,
+      "penetration": 2.0,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:timeless50",
+      "ammo": "tacz:50ae",
+      "speed": 160,
+      "referenceSpeed": 170.0,
+      "penetration": 3.67,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:type_81",
+      "ammo": "tacz:762x39",
+      "speed": 245,
+      "referenceSpeed": 250,
+      "penetration": 7.77,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:ump45",
+      "ammo": "tacz:45acp",
+      "speed": 190,
+      "referenceSpeed": 180,
+      "penetration": 2.16,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:uzi",
+      "ammo": "tacz:9mm",
+      "speed": 180,
+      "referenceSpeed": 150,
+      "penetration": 3.75,
+      "blastPenetration": 2
+    },
+    {
+      "gun": "tacz:vector45",
+      "ammo": "tacz:45acp",
+      "speed": 180,
+      "referenceSpeed": 180,
+      "penetration": 2.0,
+      "blastPenetration": 2
+    }
+  ]
+}

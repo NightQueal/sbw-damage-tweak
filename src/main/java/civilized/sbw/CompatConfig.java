@@ -3,6 +3,7 @@ import java.util.List;
 import net.minecraftforge.common.ForgeConfigSpec;
 public final class CompatConfig {
  public static final ForgeConfigSpec SPEC;
+ public static final ForgeConfigSpec.DoubleValue INSPECTION_RANGE;
  public static final ForgeConfigSpec.BooleanValue IMPACT_SOUNDS,SHOOTER_CUES;
  public static final ForgeConfigSpec.IntValue IMPACT_INTERVAL;
  public static final ForgeConfigSpec.ConfigValue<String> PEN_SOUND,BLOCK_SOUND,RICOCHET_SOUND;
@@ -46,6 +47,8 @@ public final class CompatConfig {
   PEN_PITCH=b.defineInRange("penetrationPitch",1.3,0.5,2.0);
   BLOCK_PITCH=b.defineInRange("blockedPitch",0.8,0.5,2.0);
   RICOCHET_PITCH=b.defineInRange("ricochetPitch",1.8,0.5,2.0);
+  b.pop();b.push("inspection");
+  INSPECTION_RANGE=b.comment("Client-side Jade vehicle inspection range while holding a TACZ gun. Loaded entities only; solid blocks obstruct it. Does not change interaction reach.").defineInRange("vehicleRange",200.0,16.0,256.0);
   b.pop();SPEC=b.build();
  }
  private static boolean validSound(Object value){return value instanceof String s&&net.minecraft.resources.ResourceLocation.tryParse(s)!=null;}

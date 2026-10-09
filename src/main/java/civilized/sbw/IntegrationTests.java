@@ -306,6 +306,25 @@ public final class IntegrationTests {
   require(p.getPersistentData().contains("civilized_sbw_cue_"+target.getUUID()),"Actual sound emission was not reserved");target.discard();h.succeed();
  }
 
+ @GameTest(template="empty",timeoutTicks=80,batch="longRangeInspectionAndTuning")
+ public static void longRangeInspectionAndTuning(GameTestHelper h) {
+  require(ArmorProfiles.ammo("gun:maxstuff:excaliber").blastPenetration==15,"Excaliber blast profile not migrated");
+  require(ArmorProfiles.ammo("gun:tacz:uzi").penetration>ArmorProfiles.ammo("gun:tacz:glock_17").penetration,"Gun speed tuning not applied");
+  require(ArmorProfiles.ammo("gun:tacz:rpg7").penetration==300,"RPG override changed unexpectedly");
+  var target=vehicle(h,"m_1a_2");target.setPos(target.getX(),200,target.getZ());h.runAtTickTime(8,()->{
+   var box=target.getOBBs().stream().filter(b->b.part!=com.atsuishio.superbwarfare.tools.OBB.Part.COLLISION).findFirst().orElseThrow();
+   var center=new net.minecraft.world.phys.Vec3(box.center.x,box.center.y,box.center.z);
+   var direction=new net.minecraft.world.phys.Vec3(0,0,1);var start=center.subtract(direction.scale(150));
+   var observer=net.minecraft.world.entity.EntityType.PIG.create(h.getLevel());observer.setPos(start);
+   var hit=VehicleInspectionTarget.trace(h.getLevel(),observer,start,direction,200);
+   require(hit!=null&&hit.getEntity()==target,"Vehicle not inspected at 150 blocks");
+   require(VehicleInspectionTarget.trace(h.getLevel(),observer,start,direction,100)==null,"Inspection exceeded configured range");
+   var wall=net.minecraft.core.BlockPos.containing(center.subtract(direction.scale(20)));h.getLevel().setBlockAndUpdate(wall,net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+   require(VehicleInspectionTarget.trace(h.getLevel(),observer,start,direction,200)==null,"Vehicle inspected through solid block");
+   h.getLevel().removeBlock(wall,false);target.discard();h.succeed();
+  });
+ }
+
 }
 
 

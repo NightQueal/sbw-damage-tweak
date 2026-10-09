@@ -17,6 +17,7 @@ public final class ArmorProfiles {
   public String notes="Gameplay RHA-equivalent estimates, not measured/classified armor. Restart to reload.";
   public Map<String,Vehicle> vehicles=Map.of();
   public Map<String,Ammo> ammunition=Map.of();
+  public boolean includeDefaultGunProfiles=true;
   public Map<String,Attachment> attachments=defaultAttachments();
  }
  public static final class Attachment {
@@ -50,6 +51,14 @@ public final class ArmorProfiles {
    Files.createDirectories(file.getParent());
    if(!Files.exists(file))try(var in=ArmorProfiles.class.getResourceAsStream("/civilized-sbw-armor.json")){if(in==null)throw new IllegalStateException("Missing default armor profiles");Files.copy(in,file);}
    var original=com.google.gson.JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+   boolean changed=false;
+   if(!original.has("includeDefaultGunProfiles")){original.addProperty("includeDefaultGunProfiles",true);changed=true;}
+   if(original.get("includeDefaultGunProfiles").getAsBoolean())try(var in=ArmorProfiles.class.getResourceAsStream("/civilized-sbw-armor.json")) {
+    if(in==null)throw new IllegalStateException("Missing default gun profiles");
+    var defaults=com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(in,java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("ammunition");
+    var ammunition=original.getAsJsonObject("ammunition");
+    if(ammunition!=null)for(var entry:defaults.entrySet())if(entry.getKey().startsWith("gun:")&&!ammunition.has(entry.getKey())){ammunition.add(entry.getKey(),entry.getValue().deepCopy());changed=true;}
+   }
    Data parsed=new Gson().fromJson(original,Data.class);
    if(parsed==null||parsed.vehicles==null||parsed.ammunition==null)throw new IllegalArgumentException("Missing profile maps");
    for(var entry:parsed.vehicles.entrySet()) {
@@ -69,8 +78,9 @@ public final class ArmorProfiles {
    }
    if(!original.has("attachments")) {
     original.add("attachments",new Gson().toJsonTree(parsed.attachments));
-    Files.writeString(file,new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(original)+"\n");
+    changed=true;
    }
+   if(changed)Files.writeString(file,new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(original)+"\n");
    data=parsed;
   } catch(Exception e){throw new IllegalStateException("Cannot load "+file+": "+e.getMessage(),e);}
  }

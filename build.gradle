@@ -2,7 +2,7 @@ plugins {
  id 'java'
  id 'net.minecraftforge.gradle' version '6.0.54'
 }
-version = '1.3.4'
+version = '1.4.0'
 group = 'civilized.sbw'
 base { archivesName = 'civilized-sbw-compat' }
 java { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
