@@ -112,3 +112,6 @@ Mapped advanced-armor direct impacts and focused HEAT jets produce distinct pene
 Settings are under [impactFeedback] in config/civilized-sbw-common.toml. enabled disables all added cues; shooterFeedback controls private long-range notification to the firing player. Nearby players hear the impact-position cue, with the privately notified shooter excluded from that broadcast. Sound IDs, three pitches, overall volume and minimumIntervalTicks are configurable. Missing configured sound IDs fall back to shield.block. Defaults use existing vanilla sound events, so no new audio files are redistributed.
 
 Validation adds result classification, duplicate/rate-limit checks, sound registry resolution, disabled-feedback behavior and actual server sound emission. Sixteen isolated game tests passed with Jade and Explosion Overhaul. Audibility and full-pack sound mixing require an in-game check.
+
+## Diagram spacing (1.3.4)
+Added ten pixels of vertical space before the vehicle stat rows. This moves them clear of TACZ's final Weight row and expands the panel/button offset together. No damage or penetration values change.

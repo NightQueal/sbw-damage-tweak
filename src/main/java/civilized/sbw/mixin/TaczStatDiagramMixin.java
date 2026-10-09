@@ -11,7 +11,7 @@ import civilized.sbw.*;
 public abstract class TaczStatDiagramMixin {
  private static ArmorProfiles.Ammo current(){var p=Minecraft.getInstance().player;return p==null?null:VehicleTooltips.gunProfile(p.getMainHandItem());}
  @Inject(method="getHidePropertyButtonYOffset",at=@At("RETURN"),cancellable=true,remap=false)
- private static void height(CallbackInfoReturnable<Integer> ci){if(current()!=null)ci.setReturnValue(ci.getReturnValue()+40);}
+ private static void height(CallbackInfoReturnable<Integer> ci){if(current()!=null)ci.setReturnValue(ci.getReturnValue()+50);}
  @Inject(method="draw",at=@At("TAIL"),remap=false)
  private static void rows(GuiGraphics g,Font f,int x,int y,CallbackInfo ci) {
   var a=current();if(a==null)return;int top=y+GunPropertyDiagrams.getHidePropertyButtonYOffset()-51;
