@@ -7,7 +7,7 @@ Project type: Mods
 Loader: Forge
 Minecraft version: 1.20.1
 License: MIT
-File: civilized-sbw-compat-1.2.0.jar
+File: civilized-sbw-compat-1.2.1.jar
 File type: Beta (full-pack multiplayer balance has not been validated)
 Environment: Client and server
 
@@ -30,13 +30,14 @@ Configuration: config/civilized-sbw-common.toml. One config applies to all world
 
 Eleven isolated integration tests passed with and without Explosion Overhaul. Full-pack multiplayer combat balance remains untested. Native vehicle armor and friendly-fire behavior are retained; ownerless cannon projectiles cannot identify a player's team.
 
-## 1.2.0 changelog
+## 1.2.1 changelog
 
+- Added /sbwcompat armor scan for missing mappings, loaded TACZ gun damage/speed and unused profiles. Operator-only, reporting only.
 - Added optional per-vehicle armor, ammunition penetration, angle-based hit rejection and engine hitbox routing. Enable advancedArmor to opt in; defaults preserve native armor.
 - Added independent disableNetheriteHammer and disableDpsGenerator toggles. Defaults remain true for CIVILIZED; set false to allow the equipment.
 - Updated the accompanying KubeJS recipe and JEI scripts to respect the toggles.
 - New filename: config/civilized-sbw-common.toml.
-- To preserve custom settings from 1.1.0, copy the world's serverconfig/civilized-sbw-server.toml to the new path before starting 1.2.0.
+- To preserve custom settings from 1.1.0, copy the world's serverconfig/civilized-sbw-server.toml to the new path before starting 1.2.1.
 - Build and all six integration tests passed.
 
 ## Submission notes

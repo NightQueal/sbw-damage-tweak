@@ -1,4 +1,4 @@
-# SBW damage compatibility 1.2.0
+# SBW damage compatibility 1.2.1
 
 This release replaces the archived broad damage profiles with scoped compatibility corrections. SBW's own weapons, vehicle recipes and armor definitions are unchanged.
 
@@ -48,5 +48,5 @@ Source references:
 ## Equipment toggles
 [equipment] disableNetheriteHammer and disableDpsGenerator default to true for CIVILIZED. Set either to false to allow that equipment. Restart after edits. The accompanying KubeJS recipe/JEI scripts now honor these toggles; older unconditional pack scripts must also be replaced. Client JEI visibility follows the client config, while server enforcement follows the server config. Re-enabling does not restore previously removed items/entities.
 
-## Optional advanced armor (1.2.0)
+## Optional advanced armor (1.2.1)
 See ARMOR.md. With advancedArmor enabled, mapped projectile/vehicle combinations replace the native armor modifier output. Unknown sources and vehicles retain native armor. The compatibility baseline measurements above describe advancedArmor disabled.

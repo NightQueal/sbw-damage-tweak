@@ -22,6 +22,15 @@ import rbasamoyai.createbigcannons.munitions.ShellExplosion;
 @GameTestHolder("civilized_sbw")
 @PrefixGameTestTemplate(false)
 public final class IntegrationTests {
+ static {
+  // Test-only: temporary config mutations must not be replayed asynchronously by the file watcher.
+  try {com.electronwill.nightconfig.core.file.FileWatcher.defaultInstance().removeWatch(net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get().resolve("civilized-sbw-common.toml"));}
+  catch(RuntimeException e){throw new RuntimeException(e);}
+  CompatConfig.ADVANCED_ARMOR.set(false);
+  CompatConfig.CBC_DIRECT_SCALE.set(1.0);CompatConfig.CBC_BLAST_SCALE.set(1.0);CompatConfig.TACZ_SCALE.set(1.0);
+  CompatConfig.CBC_ATTRIBUTION.set(true);CompatConfig.TACZ_EXPLOSIONS.set(true);CompatConfig.CBC_SINGLE_HIT.set(true);
+ }
+
  private static void require(boolean b,String m){if(!b)throw new RuntimeException(m);}
  private static VehicleEntity vehicle(GameTestHelper h,String id) {
   var e=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare",id)).create(h.getLevel());
@@ -200,5 +209,29 @@ public final class IntegrationTests {
   });
  }
 
+ @GameTest(template="empty",timeoutTicks=40)
+ public static void armorScanReport(GameTestHelper h) {
+  try {
+   var commands=h.getLevel().getServer().getCommands().getDispatcher();
+   var source=h.getLevel().getServer().createCommandSourceStack().withLevel(h.getLevel()).withPermission(2).withSuppressedOutput();
+   require(commands.execute("sbwcompat armor scan",source)==1,"Registered armor scan command failed");
+   require(java.nio.file.Files.exists(net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get().resolve("civilized-sbw-armor-scan.json")),"Scan report file missing");
+   boolean blocked=false;try {commands.execute("sbwcompat armor scan",source.withPermission(0));}catch(com.mojang.brigadier.exceptions.CommandSyntaxException e){blocked=true;}
+   require(blocked,"Non-operator could execute armor scan");
+  } catch(Exception e){throw new RuntimeException(e);}
+  var report=ArmorScan.scan(h.getLevel());
+  var guns=(java.util.List<?>)report.get("guns");require(!guns.isEmpty(),"TACZ gun registry not scanned");
+  require(guns.stream().anyMatch(x->((java.util.Map<?,?>)x).get("id").equals("tacz:rpg7")&&((java.util.Map<?,?>)x).get("effectiveProfileKey").equals("gun:tacz:rpg7")),"Gun override mapping missing from scan");
+  var vehicles=(java.util.List<?>)report.get("vehicles");require(vehicles.stream().anyMatch(x->((java.util.Map<?,?>)x).get("id").equals("superbwarfare:m_1a_2")),"Vehicle registry not scanned");
+  var v=vehicle(h,"m_1a_2");var p=cannon(h,"ap_shot");h.runAtTickTime(8,()->{
+   boolean old=CompatConfig.ADVANCED_ARMOR.get();try {
+    CompatConfig.ADVANCED_ARMOR.set(true);var engine=v.getOBBs().stream().filter(b->b.part==com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE).findFirst().orElseThrow();p.setPos(engine.center.x,engine.center.y,engine.center.z-30);p.setDeltaMovement(0,0,3);
+    float first=v.getDamageModifier().compute(v,direct(p,v),20),second=v.getDamageModifier().compute(v,direct(p,v),40);
+    require(first>0&&Math.abs(second-first*2)<.01,"Incoming gun/shot damage not retained by armor");
+   } finally {CompatConfig.ADVANCED_ARMOR.set(old);v.discard();}h.succeed();
+  });
+ }
+
 }
+
 

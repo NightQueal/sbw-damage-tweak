@@ -21,6 +21,8 @@ public final class ArmorProfiles {
  private static Data data=new Data();
  public static Vehicle vehicle(String id){return data.vehicles.get(id);}
  public static Ammo ammo(String id){return data.ammunition.get(id);}
+ public static java.util.Set<String> vehicleKeys(){return java.util.Set.copyOf(data.vehicles.keySet());}
+ public static java.util.Set<String> ammoKeys(){return java.util.Set.copyOf(data.ammunition.keySet());}
  public static void load() {
   Path file=FMLPaths.CONFIGDIR.get().resolve("civilized-sbw-armor.json");
   try {

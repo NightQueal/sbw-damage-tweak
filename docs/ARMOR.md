@@ -1,4 +1,4 @@
-# Experimental armor model (1.2.0)
+# Experimental armor model (1.2.1)
 
 Enable [armor] advancedArmor in config/civilized-sbw-common.toml. It is false by default in the public jar; the CIVILIZED test instance enables it. Turning it off restores native armor. ricochets and componentHits are independent switches. Restart after edits.
 
@@ -59,3 +59,10 @@ This is an independent Minecraft gameplay model inspired by those concepts; it d
 Eleven isolated Forge integration tests passed both with and without Explosion Overhaul. They cover kinetic speed loss, angled armor, ricochet endpoints, thin-plate overmatch, HEAT speed independence and chemical protection, rotated OBB normals/misses, per-vehicle differences, native engine routing, a mapped TACZ HEAT impact, unknown-ammo fallback, native-model restoration, actual CBC AP projectile flight, existing damage compatibility and equipment toggles.
 
 Fixture results (not universal damage guarantees): CBC AP rear engine shot on M1A2 caused about 65.88 hull damage; the heavy front blocked more effectively. TACZ FMJ caused about 27.27 damage to the soft truck and zero to the tank front. Rear HEAT impact caused about 147.41 tank damage with engine damage. Actual CBC AP flight caused about 52.68 damage with the advanced model. Full-pack multiplayer tuning remains pending.
+
+## Scan for missing mappings
+Operator command: /sbwcompat armor scan. Writes config/civilized-sbw-armor-scan.json on the server/instance. Includes registered SBW/addon vehicle subclasses, SBW/CBC projectile IDs, loaded TACZ gun packs and ammo IDs, effective gun-or-ammo mappings, base gun damage, projectile counts/speed, blast damage, stale profile keys and inspection errors. A gun sharing mapped ammo is covered without a gun override. Utility projectiles may intentionally remain unmapped. This command does not change live profiles or fabricate penetration values. Run again after loading new packs; the previous generated report is replaced. Permission level 2 required. Entity factories are inspected without spawning entities; a large pack can cause a brief pause during the command, but there is no continuous scan.
+
+TACZ gun damage is already included: the actual shot's damage arriving at SBW is the input to armor (including adjustments TACZ applied before hurt). Profiles determine penetration, not a replacement gun damage number. Explosion correction uses TACZ's configured blast damage. Two guns using the same ammo profile can deal different post-penetration damage. Gun-specific penetration/warhead differences use gun: overrides. Report damage/speed values are base gun definitions, not a promise about attachment/Lua/event-modified shots.
+
+1.2.1 validation: twelve integration tests passed, including execution of the registered command, report file creation, rejection of a non-operator command source, loaded gun/vehicle mapping detection and proportional preservation of incoming shot damage.
