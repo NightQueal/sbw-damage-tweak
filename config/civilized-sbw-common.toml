@@ -37,3 +37,15 @@
 	advancedArmor = false
 	ricochets = true
 	componentHits = true
+
+[impactFeedback]
+ enabled = true
+ shooterFeedback = true
+ minimumIntervalTicks = 2
+ penetrationSound = "minecraft:block.anvil.land"
+ blockedSound = "minecraft:item.shield.block"
+ ricochetSound = "minecraft:item.trident.hit"
+ volume = 0.65
+ penetrationPitch = 1.3
+ blockedPitch = 0.8
+ ricochetPitch = 1.8

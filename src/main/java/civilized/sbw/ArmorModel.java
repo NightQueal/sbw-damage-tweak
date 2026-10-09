@@ -106,6 +106,7 @@ public final class ArmorModel {
   float input=raw;
 
   Result result=resolve(ammo,input,plate(profile,vehicle,surface),profile.chemicalMultiplier,angle,projectile.getDeltaMovement().length(),sample(projectile,vehicle),areaBlast,CompatConfig.RICOCHETS.get());
+  if(!areaBlast&&input>0)ImpactFeedback.emit(vehicle,(Projectile)projectile,surface.point(),result);
   OBB.Part part=surface.part();
   if(!areaBlast&&result.penetrated()&&CompatConfig.COMPONENT_HITS.get()&&part!=OBB.Part.WHEEL_LEFT&&part!=OBB.Part.WHEEL_RIGHT) {
    // Find the first intersected engine behind the exterior plate. Hull is still tested before engine damage.

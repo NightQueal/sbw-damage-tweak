@@ -287,6 +287,25 @@ public final class IntegrationTests {
   h.succeed();
  }
 
+ @GameTest(template="empty",timeoutTicks=40,batch="armorImpactFeedback")
+ public static void armorImpactFeedback(GameTestHelper h) {
+  var ammo=ArmorProfiles.ammo("ammo:tacz:50bmg");
+  var blocked=ArmorModel.resolve(ammo,30,75,1,0,0,1,false,true);
+  var penetrated=ArmorModel.resolve(ammo,30,2,1,0,0,1,false,true);
+  var ricochet=ArmorModel.resolve(ammo,30,2,1,75,0,0,false,true);
+  require(ImpactFeedback.outcome(blocked)==ImpactFeedback.Outcome.BLOCKED&&ImpactFeedback.outcome(penetrated)==ImpactFeedback.Outcome.PENETRATION&&ImpactFeedback.outcome(ricochet)==ImpactFeedback.Outcome.RICOCHET,"Impact outcome classification incorrect");
+  var target=vehicle(h,"truck");var shot=rocket(h,target);
+  require(ImpactFeedback.reserve(target,shot,100,2),"First cue blocked");
+  require(!ImpactFeedback.reserve(target,shot,103,2),"Same projectile played duplicate cue");
+  require(!ImpactFeedback.reserve(target,rocket(h,target),101,2),"Automatic fire cue rate limit failed");
+  require(ImpactFeedback.reserve(target,rocket(h,target),102,2),"Cue rate limit did not expire");
+  require(net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.containsKey(new ResourceLocation(CompatConfig.PEN_SOUND.get()))&&net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.containsKey(new ResourceLocation(CompatConfig.BLOCK_SOUND.get()))&&net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.containsKey(new ResourceLocation(CompatConfig.RICOCHET_SOUND.get())),"Default cue sound missing");
+  var p=rocket(h,target);CompatConfig.IMPACT_SOUNDS.set(false);ImpactFeedback.emit(target,p,target.position(),penetrated);
+  require(!p.getPersistentData().contains("civilized_sbw_cue_"+target.getUUID()),"Disabled sound still emitted");CompatConfig.IMPACT_SOUNDS.set(true);
+  target.getPersistentData().remove("civilized_sbw_last_cue");ImpactFeedback.emit(target,p,target.position(),penetrated);
+  require(p.getPersistentData().contains("civilized_sbw_cue_"+target.getUUID()),"Actual sound emission was not reserved");target.discard();h.succeed();
+ }
+
 }
 
 

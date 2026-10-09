@@ -103,3 +103,12 @@ Optional Jade 11 integration adds the same armor stats when looking at a deploye
 Penetration chance is a nominal-velocity armor estimate conditional on hitting that surface, not accuracy or a destruction probability. Armor thresholds are deterministic; ricochet supplies the probability. Shot velocity loss, shooter scripts, projectile spread, subsequent engine intersections and separate explosions are not predicted. HEAT estimates describe the focused jet. Client aim can differ from the eventual server projectile impact. No per-tick server scans or new damage calculation are added.
 
 Validation adds tests for real SBW container identification, nested deployer data, compact/detailed armor rows, blocked penetration, overmatch and ricochet-adjusted probability. Fifteen isolated Forge tests passed with Jade and Explosion Overhaul. Client overlay appearance needs an in-game check.
+
+## Impact sound feedback (1.3.3)
+Ricochet is the conventional term for a glancing projectile impact. The armor model simulates rejection of the hit, not a physical reflected trajectory; this update does not redirect projectiles.
+
+Mapped advanced-armor direct impacts and focused HEAT jets produce distinct penetration, blocked and ricochet cues. Ordinary area blast is excluded to avoid misleading penetration cues for surrounding vehicles. Cues come from the computed result at the armor surface, not client estimates. They do not change damage, friendly-fire rules or native projectile/explosion effects. One cue is reserved per projectile/vehicle; the default two-tick per-vehicle interval limits automatic-fire sound spam. Native game/mod impact and explosion audio remains.
+
+Settings are under [impactFeedback] in config/civilized-sbw-common.toml. enabled disables all added cues; shooterFeedback controls private long-range notification to the firing player. Nearby players hear the impact-position cue, with the privately notified shooter excluded from that broadcast. Sound IDs, three pitches, overall volume and minimumIntervalTicks are configurable. Missing configured sound IDs fall back to shield.block. Defaults use existing vanilla sound events, so no new audio files are redistributed.
+
+Validation adds result classification, duplicate/rate-limit checks, sound registry resolution, disabled-feedback behavior and actual server sound emission. Sixteen isolated game tests passed with Jade and Explosion Overhaul. Audibility and full-pack sound mixing require an in-game check.

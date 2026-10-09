@@ -3,6 +3,10 @@ import java.util.List;
 import net.minecraftforge.common.ForgeConfigSpec;
 public final class CompatConfig {
  public static final ForgeConfigSpec SPEC;
+ public static final ForgeConfigSpec.BooleanValue IMPACT_SOUNDS,SHOOTER_CUES;
+ public static final ForgeConfigSpec.IntValue IMPACT_INTERVAL;
+ public static final ForgeConfigSpec.ConfigValue<String> PEN_SOUND,BLOCK_SOUND,RICOCHET_SOUND;
+ public static final ForgeConfigSpec.DoubleValue IMPACT_VOLUME,PEN_PITCH,BLOCK_PITCH,RICOCHET_PITCH;
  public static final ForgeConfigSpec.BooleanValue TACZ_EXPLOSIONS,CBC_ATTRIBUTION,CBC_SINGLE_HIT,DEBUG,DISABLE_HAMMER,DISABLE_DPS,ADVANCED_ARMOR,RICOCHETS,COMPONENT_HITS;
  public static final ForgeConfigSpec.DoubleValue TACZ_SCALE,CBC_DIRECT_SCALE,CBC_BLAST_SCALE;
  public static final ForgeConfigSpec.ConfigValue<List<? extends String>> TACZ_OVERRIDES,CBC_DIRECT_OVERRIDES,CBC_BLAST_OVERRIDES,VEHICLE_OVERRIDES;
@@ -30,8 +34,21 @@ public final class CompatConfig {
   ADVANCED_ARMOR=b.comment("Use configurable vehicle/ammunition armor profiles instead of native armor for mapped projectile hits. Unmapped hits retain native SBW armor. Restart after edits.").define("advancedArmor",false);
   RICOCHETS=b.comment("Enable probabilistic glancing-hit rejection. Does not redirect the physical projectile.").define("ricochets",true);
   COMPONENT_HITS=b.comment("Route penetrating rays intersecting SBW engine hitboxes to native engine health.").define("componentHits",true);
+  b.pop();
+  b.push("impactFeedback");
+  IMPACT_SOUNDS=b.comment("Outcome sounds for advanced mapped armor impacts. No extra damage or physical projectile bounce.").define("enabled",true);
+  SHOOTER_CUES=b.comment("Also send the outcome cue directly to the shooter, including at long range.").define("shooterFeedback",true);
+  IMPACT_INTERVAL=b.comment("Minimum ticks between audible impacts on one vehicle; deduplicated per projectile/vehicle.").defineInRange("minimumIntervalTicks",2,0,100);
+  PEN_SOUND=b.define("penetrationSound","minecraft:block.anvil.land",CompatConfig::validSound);
+  BLOCK_SOUND=b.define("blockedSound","minecraft:item.shield.block",CompatConfig::validSound);
+  RICOCHET_SOUND=b.define("ricochetSound","minecraft:item.trident.hit",CompatConfig::validSound);
+  IMPACT_VOLUME=b.defineInRange("volume",0.65,0.0,4.0);
+  PEN_PITCH=b.defineInRange("penetrationPitch",1.3,0.5,2.0);
+  BLOCK_PITCH=b.defineInRange("blockedPitch",0.8,0.5,2.0);
+  RICOCHET_PITCH=b.defineInRange("ricochetPitch",1.8,0.5,2.0);
   b.pop();SPEC=b.build();
  }
+ private static boolean validSound(Object value){return value instanceof String s&&net.minecraft.resources.ResourceLocation.tryParse(s)!=null;}
  private static boolean validEntry(Object entry) {
   if(!(entry instanceof String s))return false;
   String[] p=s.split("=",-1);
