@@ -234,6 +234,9 @@ public final class IntegrationTests {
 
  @GameTest(template="empty",timeoutTicks=40,batch="attachmentPenetration")
  public static void attachmentPenetration(GameTestHelper h) {
+  require(StatText.range(150,Float.MAX_VALUE).equals("150m+"),"Unlimited range leaked float sentinel");
+  require(StatText.range(75,150).equals("75-150m"),"Finite damage range incorrect");
+  require(StatText.change(1.35).equals("+35%")&&StatText.change(.45).equals("-55%"),"Attachment percentage formatting incorrect");
   var base=ArmorProfiles.ammo("ammo:tacz:50bmg");require(base!=null,"Missing .50 profile");
   var fmj=ArmorProfiles.modified(base,"tacz:ammo_mod_fmj");var hp=ArmorProfiles.modified(base,"tacz:ammo_mod_hp");var he=ArmorProfiles.modified(base,"tacz:ammo_mod_he");
   require(Math.abs(fmj.penetration-33.75)<.001&&Math.abs(hp.penetration-11.25)<.001,"Attachment penetration incorrect");
