@@ -32,3 +32,8 @@
 	disableNetheriteHammer = true
 	#Set false to allow the DPS Generator and deployer.
 	disableDpsGenerator = true
+
+[armor]
+	advancedArmor = false
+	ricochets = true
+	componentHits = true

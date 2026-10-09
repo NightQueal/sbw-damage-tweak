@@ -42,7 +42,7 @@ public final class DamageCompatibility {
    double impact=(1-ratio)*exposure;
    double raw=tacz?(impact*impact+impact)/2.0*((TaczExplosionAccess)explosion).civilized$getDamage():(impact*impact+impact)/2.0*7*radius+1;
    float input=(float)Math.min(Float.MAX_VALUE,raw*scale*vehicleFactor(vehicle));
-   DamageSource source=cbc?new AttributedDamageSource(explosion.getDamageSource(),projectile,1):explosion.getDamageSource();
+   DamageSource source=projectile instanceof net.minecraft.world.entity.projectile.Projectile?new AttributedDamageSource(explosion.getDamageSource(),projectile,1,true,pos):explosion.getDamageSource();
    float before=vehicle.getHealth();vehicle.hurt(source,input);
    if(CompatConfig.DEBUG.get())LOG.info("SBW compat {} blast projectile={} vehicle={} exposure={} input={} healthLoss={}",tacz?"TACZ":"CBC",id(projectile),id(vehicle),exposure,input,before-vehicle.getHealth());
   }

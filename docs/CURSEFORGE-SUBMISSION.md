@@ -7,7 +7,7 @@ Project type: Mods
 Loader: Forge
 Minecraft version: 1.20.1
 License: MIT
-File: civilized-sbw-compat-1.1.2.jar
+File: civilized-sbw-compat-1.2.0.jar
 File type: Beta (full-pack multiplayer balance has not been validated)
 Environment: Client and server
 
@@ -24,16 +24,19 @@ This build was made for the CIVILIZED pack and also disables obtaining/using Sup
 
 Requires Forge 1.20.1, Superb Warfare 0.8.9.1, TACZ 1.1.8, and Create Big Cannons 5.11.3, plus their normal dependencies. Add these three mods as required dependencies in the project relations.
 
+Optional advanced armor: enable advancedArmor in config/civilized-sbw-common.toml. Per-vehicle and ammunition values live in config/civilized-sbw-armor.json. Includes approximate plate geometry, ammunition penetration, glancing-hit rejection, and native engine routing. Values are gameplay estimates; ricochet does not visibly bounce projectiles.
+
 Configuration: config/civilized-sbw-common.toml. One config applies to all worlds in an instance. For multiplayer, edit the server's file. Restart after changing settings.
 
-Six isolated integration tests passed. Full-pack multiplayer combat balance remains untested. Native vehicle armor and friendly-fire behavior are retained; ownerless cannon projectiles cannot identify a player's team.
+Eleven isolated integration tests passed with and without Explosion Overhaul. Full-pack multiplayer combat balance remains untested. Native vehicle armor and friendly-fire behavior are retained; ownerless cannon projectiles cannot identify a player's team.
 
-## 1.1.2 changelog
+## 1.2.0 changelog
 
+- Added optional per-vehicle armor, ammunition penetration, angle-based hit rejection and engine hitbox routing. Enable advancedArmor to opt in; defaults preserve native armor.
 - Added independent disableNetheriteHammer and disableDpsGenerator toggles. Defaults remain true for CIVILIZED; set false to allow the equipment.
 - Updated the accompanying KubeJS recipe and JEI scripts to respect the toggles.
 - New filename: config/civilized-sbw-common.toml.
-- To preserve custom settings from 1.1.0, copy the world's serverconfig/civilized-sbw-server.toml to the new path before starting 1.1.2.
+- To preserve custom settings from 1.1.0, copy the world's serverconfig/civilized-sbw-server.toml to the new path before starting 1.2.0.
 - Build and all six integration tests passed.
 
 ## Submission notes

@@ -3,7 +3,7 @@ import java.util.List;
 import net.minecraftforge.common.ForgeConfigSpec;
 public final class CompatConfig {
  public static final ForgeConfigSpec SPEC;
- public static final ForgeConfigSpec.BooleanValue TACZ_EXPLOSIONS,CBC_ATTRIBUTION,CBC_SINGLE_HIT,DEBUG,DISABLE_HAMMER,DISABLE_DPS;
+ public static final ForgeConfigSpec.BooleanValue TACZ_EXPLOSIONS,CBC_ATTRIBUTION,CBC_SINGLE_HIT,DEBUG,DISABLE_HAMMER,DISABLE_DPS,ADVANCED_ARMOR,RICOCHETS,COMPONENT_HITS;
  public static final ForgeConfigSpec.DoubleValue TACZ_SCALE,CBC_DIRECT_SCALE,CBC_BLAST_SCALE;
  public static final ForgeConfigSpec.ConfigValue<List<? extends String>> TACZ_OVERRIDES,CBC_DIRECT_OVERRIDES,CBC_BLAST_OVERRIDES,VEHICLE_OVERRIDES;
  static {
@@ -25,6 +25,11 @@ public final class CompatConfig {
   b.push("equipment");
   DISABLE_HAMMER=b.comment("Disable the SBW Netherite Hammer. Set false to allow it.").define("disableNetheriteHammer",true);
   DISABLE_DPS=b.comment("Disable the SBW DPS Generator and its deployer. Set false to allow them.").define("disableDpsGenerator",true);
+  b.pop();
+  b.push("armor");
+  ADVANCED_ARMOR=b.comment("Use configurable vehicle/ammunition armor profiles instead of native armor for mapped projectile hits. Unmapped hits retain native SBW armor. Restart after edits.").define("advancedArmor",false);
+  RICOCHETS=b.comment("Enable probabilistic glancing-hit rejection. Does not redirect the physical projectile.").define("ricochets",true);
+  COMPONENT_HITS=b.comment("Route penetrating rays intersecting SBW engine hitboxes to native engine health.").define("componentHits",true);
   b.pop();SPEC=b.build();
  }
  private static boolean validEntry(Object entry) {

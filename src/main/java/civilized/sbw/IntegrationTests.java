@@ -121,4 +121,84 @@ public final class IntegrationTests {
   } finally {CompatConfig.DISABLE_HAMMER.set(hammerWas);CompatConfig.DISABLE_DPS.set(dpsWas);}
   h.succeed();
  }
+ @GameTest(template="empty",timeoutTicks=40)
+ public static void armorMathAndGeometry(GameTestHelper h) {
+  var ap=ArmorProfiles.ammo("entity:createbigcannons:ap_shot");
+  var flat=ArmorModel.resolve(ap,50,100,1,0,3,.99,false,false);
+  var angled=ArmorModel.resolve(ap,50,100,1,60,3,.99,false,false);
+  require(flat.penetrated()&&flat.damage()>angled.damage(),"Sloped armor not stronger");
+  require(!ArmorModel.resolve(ap,50,100,1,0,1,.99,false,false).penetrated(),"Kinetic velocity loss not applied");
+  require(ArmorModel.resolve(ap,50,100,1,85,3,0,false,true).ricochet(),"Grazing AP did not ricochet");
+  require(!ArmorModel.resolve(ap,50,5,1,85,3,0,false,true).ricochet(),"Thin plate overmatch failed");
+  var heat=ArmorProfiles.ammo("gun:tacz:rpg7");
+  var slow=ArmorModel.resolve(heat,50,100,1,0,.1,.99,false,false);
+  var fast=ArmorModel.resolve(heat,50,100,1,0,10,.99,false,false);
+  require(Math.abs(slow.damage()-fast.damage())<.001,"HEAT incorrectly depends on speed");
+  require(ArmorModel.resolve(heat,50,100,2,0,10,.99,false,false).damage()<fast.damage(),"Chemical armor multiplier ignored");
+  require(!ArmorModel.resolve(heat,50,100,1,89,3,0,true,true).ricochet(),"Area blast ricocheted");
+  var box=new com.atsuishio.superbwarfare.tools.OBB(new org.joml.Vector3d(),new org.joml.Vector3d(1,1,1),new org.joml.Quaterniond().rotateY(Math.PI/4),com.atsuishio.superbwarfare.tools.OBB.Part.EMPTY);
+  var hit=ArmorModel.intersect(box,new net.minecraft.world.phys.Vec3(0,0,10),new net.minecraft.world.phys.Vec3(0,0,-1),20);
+  require(hit!=null&&Math.abs(hit.normal().length()-1)<.001&&hit.normal().z>.5,"Rotated OBB normal failed");
+  require(ArmorModel.intersect(box,new net.minecraft.world.phys.Vec3(0,10,10),new net.minecraft.world.phys.Vec3(0,0,-1),20)==null,"OBB miss became a hit");
+  h.succeed();
+ }
+ @GameTest(template="empty",timeoutTicks=60)
+ public static void vehicleArmorAndEngine(GameTestHelper h) {
+  var v=vehicle(h,"m_1a_2");h.runAtTickTime(8,()->{
+   boolean old=CompatConfig.ADVANCED_ARMOR.get();
+   try {
+    CompatConfig.ADVANCED_ARMOR.set(true);
+    var engine=v.getOBBs().stream().filter(b->b.part==com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE).findFirst().orElseThrow();
+    var p=cannon(h,"ap_shot");p.setPos(engine.center.x,engine.center.y,engine.center.z-30);p.setDeltaMovement(0,0,3);
+    float engineBefore=v.getMainEngineHealth();v.hurt(direct(p,v),50);
+    require(v.getHealth()<250&&v.getMainEngineHealth()<engineBefore,"Penetrating rear shot did not damage native engine");
+    float rearLoss=250-v.getHealth();v.setHealth(250);p.setPos(engine.center.x,engine.center.y,engine.center.z+30);p.setDeltaMovement(0,0,-3);v.hurt(direct(p,v),50);
+    require(250-v.getHealth()<rearLoss,"Heavy front armor not stronger than rear");
+    CompatConfig.ADVANCED_ARMOR.set(false);v.setHealth(250);v.hurt(direct(p,v),50);require(v.getHealth()<250,"Disabling advanced armor failed to restore native path");
+    System.out.println("ARMOR_TEST M1A2 rear loss="+rearLoss+" engine health="+v.getMainEngineHealth());
+   } finally {CompatConfig.ADVANCED_ARMOR.set(old);v.discard();}
+   h.succeed();
+  });
+ }
+
+ @GameTest(template="empty",timeoutTicks=60)
+ public static void taczArmorAndShapedCharge(GameTestHelper h) {
+  var v=vehicle(h,"m_1a_2");var light=vehicle(h,"truck");h.runAtTickTime(8,()->{
+   boolean old=CompatConfig.ADVANCED_ARMOR.get();
+   try {
+    CompatConfig.ADVANCED_ARMOR.set(true);
+    var p=rocket(h,v);p.setDeltaMovement(0,0,-1);
+    var gun=EntityKineticBullet.class.getDeclaredField("gunId");gun.setAccessible(true);gun.set(p,new ResourceLocation("test:rifle"));
+    var ammo=EntityKineticBullet.class.getDeclaredField("ammoId");ammo.setAccessible(true);ammo.set(p,new ResourceLocation("tacz:50bmg"));
+    var holder=h.getLevel().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(ResourceKey.create(Registries.DAMAGE_TYPE,new ResourceLocation("tacz:bullet")));
+    p.setPos(light.getBoundingBox().getCenter().add(0,0,30));var src=new civilized.sbw.AttributedDamageSource(new DamageSource(holder,p,p),p,1);
+    light.hurt(src,30);require(light.getHealth()<250,"FMJ could not damage unarmored truck");
+    p.setPos(v.getBoundingBox().getCenter().add(0,0,30));v.hurt(src,30);require(v.getHealth()==250,"FMJ penetrated MBT front");
+    ammo.set(p,new ResourceLocation("test:unknown"));require(ArmorModel.compute(v,src,30)==null,"Unknown ammo did not retain native armor");
+    gun.set(p,new ResourceLocation("tacz:rpg7"));ammo.set(p,new ResourceLocation("tacz:rpg_rocket"));p.setDeltaMovement(0,0,1);
+    var engine=v.getOBBs().stream().filter(b->b.part==com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE).findFirst().orElseThrow();
+    var start=new net.minecraft.world.phys.Vec3(engine.center.x,engine.center.y,engine.center.z-30);
+    var hit=ArmorModel.trace(v,start,new net.minecraft.world.phys.Vec3(0,0,1),60).get(0);
+    p.setPos(hit.point());var explosion=new civilized.sbw.AttributedDamageSource(new DamageSource(holder,p,p),p,1,true,hit.point());
+    float before=v.getMainEngineHealth();v.hurt(explosion,120);
+    require(v.getHealth()<250&&v.getMainEngineHealth()<before,"Impact HEAT jet did not penetrate rear and hit engine");
+    System.out.println("ARMOR_TEST TACZ FMJ truck loss="+(250-light.getHealth())+" RPG rear loss="+(250-v.getHealth()));
+   } catch(ReflectiveOperationException e){throw new RuntimeException(e);}
+   finally {CompatConfig.ADVANCED_ARMOR.set(old);v.discard();light.discard();}
+   h.succeed();
+  });
+ }
+
+ @GameTest(template="empty",timeoutTicks=80)
+ public static void advancedCbcFlight(GameTestHelper h) {
+  var v=vehicle(h,"m_1a_2");boolean old=CompatConfig.ADVANCED_ARMOR.get();
+  h.runAtTickTime(30,()->{CompatConfig.ADVANCED_ARMOR.set(true);var p=cannon(h,"ap_shot");p.setPos(v.position().add(0,7,0));p.setDeltaMovement(0,-3,0);h.getLevel().addFreshEntity(p);});
+  h.runAtTickTime(48,()->{
+   try {float loss=250-v.getHealth();require(loss>10&&loss<100,"Advanced CBC projectile flight failed or repeated damage: "+loss);System.out.println("ARMOR_TEST CBC AP actual advanced flight healthLoss="+loss);}
+   finally {CompatConfig.ADVANCED_ARMOR.set(old);v.discard();}
+   h.succeed();
+  });
+ }
+
 }
+
