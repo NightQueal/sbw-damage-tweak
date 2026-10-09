@@ -8,7 +8,8 @@
     "CbcDamageSourceMixin",
     "VehicleInputMixin",
     "CbcImpactMixin",
-    "TaczAttachmentMixin"
+    "TaczAttachmentMixin",
+    "SbwProjectileProfileMixin"
   ],
   "injectors": {
     "defaultRequire": 1

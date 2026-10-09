@@ -34,6 +34,7 @@
 	disableDpsGenerator = true
 
 [armor]
+	mountedWeaponArmor = true
 	advancedArmor = false
 	ricochets = true
 	componentHits = true
@@ -51,4 +52,5 @@
  ricochetPitch = 1.8
 
 [inspection]
+	mountedDetails = true
  vehicleRange = 200.0

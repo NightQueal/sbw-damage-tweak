@@ -17,7 +17,7 @@ public final class ArmorProfiles {
   public String notes="Gameplay RHA-equivalent estimates, not measured/classified armor. Restart to reload.";
   public Map<String,Vehicle> vehicles=Map.of();
   public Map<String,Ammo> ammunition=Map.of();
-  public boolean includeDefaultGunProfiles=true;
+  public boolean includeDefaultGunProfiles=true,includeDefaultMountedProfiles=true;
   public Map<String,Attachment> attachments=defaultAttachments();
  }
  public static final class Attachment {
@@ -58,6 +58,12 @@ public final class ArmorProfiles {
     var defaults=com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(in,java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("ammunition");
     var ammunition=original.getAsJsonObject("ammunition");
     if(ammunition!=null)for(var entry:defaults.entrySet())if(entry.getKey().startsWith("gun:")&&!ammunition.has(entry.getKey())){ammunition.add(entry.getKey(),entry.getValue().deepCopy());changed=true;}
+   }
+   if(!original.has("includeDefaultMountedProfiles")){original.addProperty("includeDefaultMountedProfiles",true);changed=true;}
+   if(original.get("includeDefaultMountedProfiles").getAsBoolean())try(var in=ArmorProfiles.class.getResourceAsStream("/civilized-sbw-armor.json")) {
+    var defaults=com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(in,java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("ammunition");
+    var ammunition=original.getAsJsonObject("ammunition");
+    if(ammunition!=null)for(var entry:defaults.entrySet())if((entry.getKey().startsWith("sbwammo:")||entry.getKey().startsWith("sbwgun:"))&&!ammunition.has(entry.getKey())){ammunition.add(entry.getKey(),entry.getValue().deepCopy());changed=true;}
    }
    Data parsed=new Gson().fromJson(original,Data.class);
    if(parsed==null||parsed.vehicles==null||parsed.ammunition==null)throw new IllegalArgumentException("Missing profile maps");

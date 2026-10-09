@@ -12,7 +12,7 @@ public final class VehicleInspectionTarget {
   double limit=block.getType()==HitResult.Type.MISS?range:start.distanceTo(block.getLocation());
   EntityHitResult selected=null;double nearest=limit;
   for(var entity:level.getEntities(viewer,new AABB(start,start.add(direction.scale(limit))).inflate(4),e->e instanceof VehicleEntity&&e.isAlive())) {
-   if(entity==viewer.getVehicle())continue;
+   if(entity==MountedWeapons.vehicle(viewer))continue;
    var hits=ArmorModel.trace((VehicleEntity)entity,start,direction,limit);
    if(!hits.isEmpty()&&hits.get(0).distance()<nearest){nearest=hits.get(0).distance();selected=new EntityHitResult(entity,hits.get(0).point());}
   }return selected;

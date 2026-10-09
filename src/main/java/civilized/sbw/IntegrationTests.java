@@ -248,7 +248,7 @@ public final class IntegrationTests {
   require(ArmorProfiles.modified(base,"test:unknown")==base,"Unknown attachment changed base profile");
   var copy=new com.google.gson.Gson().fromJson(ArmorProfiles.json(),ArmorProfiles.Data.class);
   require(ArmorProfiles.modified(copy.ammunition.get("ammo:tacz:50bmg"),"tacz:ammo_mod_hp",copy).penetration==hp.penetration,"Synced tooltip profile differs from server");
-  var original=new ProfileSync.Snapshot(ArmorProfiles.json(),true,false,true);
+  var original=new ProfileSync.Snapshot(ArmorProfiles.json(),true,false,true,true);
   var buffer=new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
   try {original.write(buffer);require(ProfileSync.Snapshot.read(buffer).equals(original),"Server tooltip settings did not round-trip");}finally{buffer.release();}
   h.succeed();
@@ -282,7 +282,7 @@ public final class IntegrationTests {
   var type=net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getValue(new net.minecraft.resources.ResourceLocation("superbwarfare:m_1a_2"));
   var container=com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(type);
   require(VehicleStats.itemVehicle(container).equals("superbwarfare:m_1a_2"),"Actual SBW vehicle container not recognized");
-  var item=new ItemStack(net.minecraft.world.item.Items.STONE);item.getOrCreateTag().putString("EntityType","superbwarfare:m_1a_2");require(VehicleStats.itemVehicle(item).equals("superbwarfare:m_1a_2"),"Container vehicle ID missing");
+  var item=new ItemStack(com.atsuishio.superbwarfare.init.ModItems.RPG.get());item.getOrCreateTag().putString("EntityType","superbwarfare:m_1a_2");require(VehicleStats.itemVehicle(item).equals("superbwarfare:m_1a_2"),"Container vehicle ID missing");
   var data=new net.minecraft.nbt.CompoundTag();data.putString("EntityType","superbwarfare:truck");item.setTag(new net.minecraft.nbt.CompoundTag());item.getOrCreateTag().put("BlockEntityTag",data);require(VehicleStats.itemVehicle(item).equals("superbwarfare:truck"),"Deployer vehicle ID missing");
   h.succeed();
  }
@@ -325,6 +325,58 @@ public final class IntegrationTests {
   });
  }
 
+
+ @GameTest(template="empty",timeoutTicks=60,batch="mountedWeaponSelection")
+ public static void mountedWeaponSelection(GameTestHelper h) {
+  var v=vehicle(h,"m_1a_2");var player=net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,ItemStack.EMPTY);
+  require(player.startRiding(v,true),"Cannot enter vehicle");v.changeSeat(player,0);
+  var profiles=new com.google.gson.Gson().fromJson(ArmorProfiles.json(),ArmorProfiles.Data.class);
+  var gun=v.getGunData(player);require(gun!=null,"Gunner seat has no selected weapon");
+  gun.selectedAmmoType.set(0);var ap=MountedWeapons.inspect(player,profiles,true);
+  require(ap!=null&&ap.ammo()!=null&&ap.ammo().penetration==600,"Mounted AP display profile incorrect: "+(ap==null?"none":ap.ammunition()));
+  require(ap.origin().distanceTo(v.getShootPos(player,1))<.001&&ap.direction().distanceTo(v.getShootVec(player,1))<.001,"Mounted display does not follow firing ray");
+  gun.selectedAmmoType.set(1);var he=MountedWeapons.inspect(player,profiles,true);require(he.ammo().type.equals("HE")&&he.ammo().blastPenetration==35,"Ammo selection did not update display");
+  require(MountedWeapons.inspect(player,profiles,false).ammo()==null,"Disabled mounted armor still previews penetration");
+  v.setWeaponIndex(0,1);var mg=MountedWeapons.inspect(player,profiles,true);require(mg.ammo()!=null&&mg.ammo().penetration==12,"Machine-gun selection ignored");
+  v.changeSeat(player,2);require(MountedWeapons.inspect(player,profiles,true).ammo()==null,"Unarmed passenger borrowed gunner weapon");
+  var report=ArmorScan.scan(h.getLevel());var modes=(java.util.List<java.util.Map<String,Object>>)report.get("mountedWeapons");
+  require(modes.stream().anyMatch(row->row.get("vehicleId").equals("superbwarfare:m_1a_2")&&row.get("ammoId").equals("superbwarfare:large_shell_he")&&Boolean.TRUE.equals(row.get("mapped"))),"Mounted HE mode missing from scan");
+  require(modes.stream().anyMatch(row->row.get("ammoId").equals("FE")&&!Boolean.TRUE.equals(row.get("mapped"))),"Energy ray falsely marked as mapped");
+  player.stopRiding();require(MountedWeapons.inspect(player,profiles,true)==null,"On-foot player treated as mounted");v.discard();h.succeed();
+ }
+ @GameTest(template="empty",timeoutTicks=80,batch="mountedProjectileCapture")
+ public static void mountedProjectileCapture(GameTestHelper h) {
+  var tank=vehicle(h,"m_1a_2");var target=vehicle(h,"truck");tank.setPos(tank.getX(),200,tank.getZ());target.setPos(tank.position().add(0,0,40));
+  var player=net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());player.startRiding(tank,true);tank.changeSeat(player,0);
+  h.runAtTickTime(8,()->{
+   var gun=tank.getGunData(player);gun.selectedAmmoType.set(0);
+   var start=target.position().add(0,1,-20);var direction=new net.minecraft.world.phys.Vec3(0,0,1);
+   var parameters=new com.atsuishio.superbwarfare.data.gun.ShootParameters(tank,player,h.getLevel(),start,direction,gun,0,true,null,null);
+   require(gun.item.shootBullet(parameters),"Actual SBW gun did not spawn projectile");
+   var shots=h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.projectile.Projectile.class,new net.minecraft.world.phys.AABB(start.subtract(2,2,2),start.add(2,2,2)),e->e.getPersistentData().contains(MountedWeapons.AMMO_TAG));
+   require(!shots.isEmpty(),"Actual SBW factory did not capture mounted ammo");var shot=shots.get(0);
+   require(ArmorModel.ammoKey(shot).equals("sbwammo:superbwarfare:large_shell_ap"),"Incorrect fired AP profile: "+ArmorModel.ammoKey(shot));
+   gun.selectedAmmoType.set(1);require(ArmorProfiles.ammo(ArmorModel.ammoKey(shot)).penetration==600,"Changing ammo changed an in-flight round");
+   CompatConfig.MOUNTED_ARMOR.set(false);require(ArmorModel.ammoKey(shot).isEmpty(),"Mounted toggle did not preserve native fallback");CompatConfig.MOUNTED_ARMOR.set(true);CompatConfig.ADVANCED_ARMOR.set(true);CompatConfig.RICOCHETS.set(false);
+  });
+  h.runAtTickTime(14,()->{require(target.getHealth()<250||!target.isAlive(),"Actual mounted AP flight caused no damage");CompatConfig.ADVANCED_ARMOR.set(false);CompatConfig.RICOCHETS.set(true);player.stopRiding();tank.discard();target.discard();h.succeed();});
+ }
+ @GameTest(template="empty",timeoutTicks=60,batch="mountedShellExplosion")
+ public static void mountedShellExplosion(GameTestHelper h) {
+  var tank=vehicle(h,"m_1a_2");var target=vehicle(h,"truck");target.setPos(target.position().add(20,0,0));
+  h.runAtTickTime(8,()->{
+   var gun=tank.getGunData("Cannon");gun.selectedAmmoType.set(1);
+   var p=(net.minecraft.world.entity.projectile.Projectile)ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare:cannon_shell")).create(h.getLevel());
+   p.setOwner(net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel()));p.setPos(target.position().add(0,4,0));p.setDeltaMovement(0,-1,0);MountedWeapons.capture(p,gun);
+   CompatConfig.ADVANCED_ARMOR.set(true);CompatConfig.MOUNTED_ARMOR.set(true);
+   float exposure=CustomExplosion.getSeenPercentOptimized(h.getLevel(),p.position(),target);double impact=(1-Math.sqrt(target.distanceToSqr(p.position()))/12)*exposure;float raw=(float)((impact*impact+impact)/2*100);
+   var source=h.getLevel().damageSources().thrown(p,p.getOwner());var attributed=new AttributedDamageSource(source,p,1,true,p.position());var expected=ArmorModel.compute(target,attributed,raw);
+   require(expected!=null&&expected>0,"Mounted HE armor computation missing");
+   target.setHealth(250);new CustomExplosion(h.getLevel(),p,source,100,p.getX(),p.getY(),p.getZ(),6,net.minecraft.world.level.Explosion.BlockInteraction.KEEP).explode();
+   float loss=250-target.getHealth();require(Math.abs(loss-expected)<.01,"SBW blast missing/doubled: "+loss+" expected "+expected);
+   var unmapped=com.atsuishio.superbwarfare.data.gun.GunData.from(new ItemStack(com.atsuishio.superbwarfare.init.ModItems.RPG.get()));
+   var ordinary=rocket(h,target);MountedWeapons.capture(ordinary,unmapped);require(!ordinary.getPersistentData().contains(MountedWeapons.AMMO_TAG),"Handheld gun captured as mounted");
+   CompatConfig.ADVANCED_ARMOR.set(false);tank.discard();target.discard();h.succeed();
+  });
+ }
 }
-
-

@@ -20,6 +20,7 @@ public final class ArmorModel {
   return (x>>>11)*0x1.0p-53;
  }
  public static String ammoKey(Entity projectile) {
+  if(projectile.getPersistentData().contains(MountedWeapons.AMMO_TAG))return CompatConfig.MOUNTED_ARMOR.get()?MountedWeapons.projectileKey(projectile):"";
   if(projectile instanceof EntityKineticBullet bullet) {
    String gun="gun:"+bullet.getGunId();if(ArmorProfiles.ammo(gun)!=null)return gun;
    return "ammo:"+bullet.getAmmoId();

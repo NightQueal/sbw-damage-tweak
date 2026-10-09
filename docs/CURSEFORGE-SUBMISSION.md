@@ -7,7 +7,7 @@ Project type: Mods
 Loader: Forge
 Minecraft version: 1.20.1
 License: MIT
-File: civilized-sbw-compat-1.4.0.jar
+File: civilized-sbw-compat-1.5.0.jar
 File type: Beta (full-pack multiplayer balance has not been validated)
 Environment: Client and server
 
