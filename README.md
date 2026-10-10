@@ -68,3 +68,6 @@ With advanced armor and componentHits enabled, mapped wheel hits damage native w
 ### 1.6.1 destroyed tracks and compact Jade overlay
 Mapped tracked vehicles cannot use powered acceleration or steering with either track at zero health. Gravity, towing and momentum remain physical. Passive native wheel regeneration cannot revive zero-health running gear; explicit repairs remain allowed. Undestroyed components still regenerate normally. Requires advancedArmor and componentHits.
 The compact overlay uses green/red track health, gold/red estimated hull HP and percentage, yellow track damage, and cyan penetration/ricochet chances. Expanded details group armor and weapon stats. Native SBW hull health is no longer repeated. Set inspection.mountedDetails=true to automatically expand the mounted inspection; default is false.
+
+### 1.6.2 heavy-tank weapon balance
+M95 direct penetration: 25 -> 40 mm. Excaliber (auto .50) direct penetration: 25 -> 600 mm; blast penetration: 15 -> 550 mm. Gameplay balance values; gun damage/radius and vehicle armor unchanged. Existing custom profile files remain authoritative; the CIVILIZED instance was explicitly updated.

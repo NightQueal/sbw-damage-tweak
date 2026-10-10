@@ -1290,7 +1290,7 @@
     },
     "gun:maxstuff:excaliber": {
       "type": "FMJ",
-      "penetration": 25.0,
+      "penetration": 600,
       "caliber": 12.7,
       "referenceSpeed": 0,
       "velocityExponent": 1.43,
@@ -1299,7 +1299,7 @@
       "ricochetEnd": 75,
       "overmatchRatio": 7,
       "postPenMultiplier": 1,
-      "blastPenetration": 15,
+      "blastPenetration": 550,
       "blastLeak": 0
     },
     "gun:maxstuff:g36": {
@@ -2396,7 +2396,7 @@
     },
     "gun:tacz:m95": {
       "type": "FMJ",
-      "penetration": 25.0,
+      "penetration": 40,
       "caliber": 12.7,
       "referenceSpeed": 0,
       "velocityExponent": 1.43,
