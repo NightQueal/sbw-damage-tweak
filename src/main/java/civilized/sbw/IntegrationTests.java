@@ -442,4 +442,33 @@ public final class IntegrationTests {
    });
   });
  }
+
+ @GameTest(template="empty",timeoutTicks=80,batch="aircraftStructureBalance")
+ public static void aircraftStructureBalance(GameTestHelper h){
+  var v=vehicle(h,"a_10a");h.runAtTickTime(8,()->{
+   var profile=ArmorProfiles.vehicle("superbwarfare:a_10a");var tank=ArmorProfiles.vehicle("superbwarfare:m_1a_2");
+   require(AircraftBalance.hullMultiplier(profile,ArmorProfiles.ammo("gun:tacz:ak47"),false)==.2,"Aircraft rifle structure scaling wrong");
+   require(AircraftBalance.hullMultiplier(profile,ArmorProfiles.ammo("gun:tacz:m95"),false)==.45,"Aircraft anti-materiel scaling wrong");
+   require(AircraftBalance.hullMultiplier(profile,RunningGear.residual(ArmorProfiles.ammo("gun:maxstuff:excaliber"),600),false)==1,"Endgame auto .50 unintentionally nerfed");
+   require(AircraftBalance.hullMultiplier(profile,ArmorProfiles.ammo("gun:tacz:rpg7"),true)==1,"Aircraft rocket blast nerfed");
+   require(AircraftBalance.hullMultiplier(tank,ArmorProfiles.ammo("gun:tacz:ak47"),false)==1,"Tank combat changed");
+   CompatConfig.ADVANCED_ARMOR.set(true);v.setMainEngineHealth(100);v.setSubEngineHealth(100);float hull=v.getHealth();
+   var source=h.getLevel().damageSources().generic();RunningGear.prepare(v,source,com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE,40);v.setLastDamageSource(source);v.setLastDamageStamp(v.level().getGameTime());v.onHurt(10,null,true);
+   require(v.getMainEngineHealth()==60&&v.getSubEngineHealth()==100&&v.getHealth()==hull-10,"Aircraft engine/hull damage not independent");
+   // Hit a real A10 engine ray with a mapped cannon projectile through native hurt.
+   boolean hitEngine=false;
+   outer:for(var box:v.getOBBs())if(AircraftBalance.engine(box.part))for(var dir:new net.minecraft.world.phys.Vec3[]{new net.minecraft.world.phys.Vec3(1,0,0),new net.minecraft.world.phys.Vec3(-1,0,0),new net.minecraft.world.phys.Vec3(0,-1,0)}){
+    var center=new net.minecraft.world.phys.Vec3(box.center.x,box.center.y,box.center.z);var start=center.subtract(dir.scale(20));var hits=ArmorModel.trace(v,start,dir,50);
+    if(hits.isEmpty()||RunningGear.wheel(hits.get(0).part()))continue;
+    var projectile=cannon(h,"ap_shot");projectile.setPos(start);projectile.setDeltaMovement(dir.scale(10));v.setMainEngineHealth(500);v.setSubEngineHealth(500);v.setHealth(250);
+    v.hurt(new AttributedDamageSource(h.getLevel().damageSources().generic(),projectile,1),40);
+    double component=1000-v.getMainEngineHealth()-v.getSubEngineHealth();
+    require(component>0&&Math.abs((250-v.getHealth())-component*profile.aircraftEngineHullFraction)<.01,"Actual aircraft engine hit double-damaged hull");hitEngine=true;break outer;
+   }
+   require(hitEngine,"Actual aircraft engine geometry not exercised");
+   v.setMainEngineHealth(0);com.atsuishio.superbwarfare.entity.vehicle.utils.VehicleEffectUtils.handlePartHealth(v);require(v.getMainEngineHealth()==0,"Destroyed aircraft engine self-revived");
+   v.setMainEngineHealth(v.getMainEngineMaxHealth());com.atsuishio.superbwarfare.entity.vehicle.utils.VehicleEffectUtils.handlePartHealth(v);require(!v.getMainEngineDamaged(),"Engine repair failed");
+   CompatConfig.ADVANCED_ARMOR.set(false);v.discard();h.succeed();
+  });
+ }
 }

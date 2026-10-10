@@ -122,7 +122,7 @@ public final class ArmorModel {
    } else result=new Result(0,false,result.ricochet(),result.effectiveArmor(),result.penetration());
    RunningGear.prepare(vehicle,source,part,(float)wheelDamage);
    OBBHitter.getInstance(projectile).sbw$setCurrentHitPart(OBB.Part.EMPTY);
-   return (float)result.damage();
+   return (float)(result.damage()*AircraftBalance.hullMultiplier(profile,ammo,blast));
   }
   if(!areaBlast&&result.penetrated()&&CompatConfig.COMPONENT_HITS.get()&&part!=OBB.Part.WHEEL_LEFT&&part!=OBB.Part.WHEEL_RIGHT) {
    // Find the first intersected engine behind the exterior plate. Hull is still tested before engine damage.
@@ -131,6 +131,13 @@ public final class ArmorModel {
   }
   if(areaBlast||!result.penetrated())OBBHitter.getInstance(projectile).sbw$setCurrentHitPart(OBB.Part.EMPTY);
   double damage=result.damage();
+  if(profile.aircraft&&!blast&&result.penetrated()&&CompatConfig.COMPONENT_HITS.get()&&AircraftBalance.engine(part)) {
+   double engineDamage=damage*profile.engineDamageMultiplier;
+   RunningGear.prepare(vehicle,source,part,(float)engineDamage);
+   OBBHitter.getInstance(projectile).sbw$setCurrentHitPart(OBB.Part.EMPTY);
+   return (float)(engineDamage*profile.aircraftEngineHullFraction);
+  }
+  damage*=AircraftBalance.hullMultiplier(profile,ammo,blast);
   if(!areaBlast&&result.penetrated()&&(part==OBB.Part.MAIN_ENGINE||part==OBB.Part.SUB_ENGINE))damage*=profile.engineDamageMultiplier;
   if(CompatConfig.DEBUG.get())com.mojang.logging.LogUtils.getLogger().info("SBW armor vehicle={} ammo={} part={} angle={} armor={} penetration={} ricochet={} damage={}",DamageCompatibility.id(vehicle),ammoKey(projectile),part,angle,result.effectiveArmor(),result.penetration(),result.ricochet(),damage);
   return (float)Math.min(Float.MAX_VALUE,damage);

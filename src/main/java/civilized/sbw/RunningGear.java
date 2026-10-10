@@ -18,6 +18,8 @@ public final class RunningGear {
  public static void commit(VehicleEntity v){
   var p=pending.remove(v);if(p==null||p.source()!=v.getLastDamageSource()||p.tick()!=v.level().getGameTime()||p.damage()<=0)return;
   if(p.part()==OBB.Part.WHEEL_LEFT)v.setLeftWheelHealth(Math.max(0,v.getLeftWheelHealth()-p.damage()));
-  else v.setRightWheelHealth(Math.max(0,v.getRightWheelHealth()-p.damage()));
+  else if(p.part()==OBB.Part.WHEEL_RIGHT)v.setRightWheelHealth(Math.max(0,v.getRightWheelHealth()-p.damage()));
+  else if(p.part()==OBB.Part.MAIN_ENGINE)v.setMainEngineHealth(Math.max(0,v.getMainEngineHealth()-p.damage()));
+  else if(p.part()==OBB.Part.SUB_ENGINE)v.setSubEngineHealth(Math.max(0,v.getSubEngineHealth()-p.damage()));
  }
 }

@@ -7,6 +7,8 @@ import net.minecraftforge.fml.loading.FMLPaths;
 /** Explicit, editable gameplay estimates. No third-party implementation is copied. */
 public final class ArmorProfiles {
  public static final class Vehicle {
+  public boolean aircraft=false;
+  public double smallArmsHullMultiplier=.20,heavySmallArmsHullMultiplier=.45,smallArmsMaxCaliber=20,smallArmsMaxPenetration=80,aircraftEngineHullFraction=.25;
   public double front=10,side=8,rear=6,roof=4,bottom=4,chemicalMultiplier=1,turretMultiplier=1,engineDamageMultiplier=1,trackArmor=8;
  }
  public static final class Ammo {
@@ -17,7 +19,7 @@ public final class ArmorProfiles {
   public String notes="Gameplay RHA-equivalent estimates, not measured/classified armor. Restart to reload.";
   public Map<String,Vehicle> vehicles=Map.of();
   public Map<String,Ammo> ammunition=Map.of();
-  public boolean includeDefaultGunProfiles=true,includeDefaultMountedProfiles=true;
+  public boolean includeDefaultGunProfiles=true,includeDefaultMountedProfiles=true,includeDefaultAircraftProfiles=true;
   public Map<String,Attachment> attachments=defaultAttachments();
  }
  public static final class Attachment {
@@ -65,11 +67,21 @@ public final class ArmorProfiles {
     var ammunition=original.getAsJsonObject("ammunition");
     if(ammunition!=null)for(var entry:defaults.entrySet())if((entry.getKey().startsWith("sbwammo:")||entry.getKey().startsWith("sbwgun:"))&&!ammunition.has(entry.getKey())){ammunition.add(entry.getKey(),entry.getValue().deepCopy());changed=true;}
    }
+   if(!original.has("includeDefaultAircraftProfiles")){original.addProperty("includeDefaultAircraftProfiles",true);changed=true;}
+   if(original.get("includeDefaultAircraftProfiles").getAsBoolean())try(var in=ArmorProfiles.class.getResourceAsStream("/civilized-sbw-armor.json")){
+    var defaults=com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(in,java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("vehicles");
+    var vehicles=original.getAsJsonObject("vehicles");
+    for(var entry:defaults.entrySet())if(entry.getValue().getAsJsonObject().has("aircraft")&&vehicles.has(entry.getKey())){
+     var vehicle=vehicles.getAsJsonObject(entry.getKey());var baseline=entry.getValue().getAsJsonObject();
+     for(String key:new String[]{"aircraft","smallArmsHullMultiplier","heavySmallArmsHullMultiplier","smallArmsMaxCaliber","smallArmsMaxPenetration","aircraftEngineHullFraction"})if(!vehicle.has(key)){vehicle.add(key,baseline.get(key).deepCopy());changed=true;}
+    }
+   }
    Data parsed=new Gson().fromJson(original,Data.class);
    if(parsed==null||parsed.vehicles==null||parsed.ammunition==null)throw new IllegalArgumentException("Missing profile maps");
    for(var entry:parsed.vehicles.entrySet()) {
     Vehicle v=entry.getValue();if(v==null)throw new IllegalArgumentException(entry.getKey());
-    for(double n:new double[]{v.front,v.side,v.rear,v.roof,v.bottom,v.chemicalMultiplier,v.turretMultiplier,v.engineDamageMultiplier,v.trackArmor})range(n,0,10000);
+    for(double n:new double[]{v.front,v.side,v.rear,v.roof,v.bottom,v.chemicalMultiplier,v.turretMultiplier,v.engineDamageMultiplier,v.trackArmor,v.smallArmsMaxCaliber,v.smallArmsMaxPenetration})range(n,0,10000);
+    for(double n:new double[]{v.smallArmsHullMultiplier,v.heavySmallArmsHullMultiplier,v.aircraftEngineHullFraction})range(n,0,1);
    }
    for(var entry:parsed.ammunition.entrySet()) {
     Ammo a=entry.getValue();if(a==null||!java.util.Set.of("FMJ","AP","APC","APCR","APHE","HE","HEAT","HP","INCENDIARY").contains(a.type))throw new IllegalArgumentException("Invalid ammunition "+entry.getKey());

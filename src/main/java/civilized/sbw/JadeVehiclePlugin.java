@@ -16,7 +16,8 @@ public final class JadeVehiclePlugin implements IWailaPlugin {
    var armor=profiles.vehicles.get(DamageCompatibility.id(v));if(armor==null)return;
    String gear=v.getEngineInfo() instanceof com.atsuishio.superbwarfare.data.vehicle.subdata.EngineInfo.Track?"Track":"Wheel";
    boolean details=accessor.showDetails()||(accessor.getPlayer()!=null&&MountedWeapons.vehicle(accessor.getPlayer())!=null&&CompatConfig.MOUNTED_DETAILS.get());
-   tooltip.add(Component.literal(gear+" HP L/R: "+StatText.number(v.getLeftWheelHealth())+" / "+StatText.number(v.getRightWheelHealth())+" HP").withStyle(v.getLeftWheelHealth()<=0||v.getRightWheelHealth()<=0?net.minecraft.ChatFormatting.RED:net.minecraft.ChatFormatting.GREEN));
+   if(armor.aircraft)tooltip.add(Component.literal("Engine HP 1/2: "+StatText.number(v.getMainEngineHealth())+" / "+StatText.number(v.getSubEngineHealth())).withStyle(v.getMainEngineHealth()<=0?net.minecraft.ChatFormatting.RED:net.minecraft.ChatFormatting.GREEN));
+   else tooltip.add(Component.literal(gear+" HP L/R: "+StatText.number(v.getLeftWheelHealth())+" / "+StatText.number(v.getRightWheelHealth())+" HP").withStyle(v.getLeftWheelHealth()<=0||v.getRightWheelHealth()<=0?net.minecraft.ChatFormatting.RED:net.minecraft.ChatFormatting.GREEN));
    if(settings.components()&&v.getEngineInfo() instanceof com.atsuishio.superbwarfare.data.vehicle.subdata.EngineInfo.Track&&(v.getLeftWheelHealth()<=0||v.getRightWheelHealth()<=0))tooltip.add(Component.literal("IMMOBILIZED").withStyle(net.minecraft.ChatFormatting.RED));
    var player=accessor.getPlayer();if(player==null)return;
    var mounted=MountedWeapons.inspect(player,profiles,settings.mounted());
@@ -36,6 +37,11 @@ public final class JadeVehiclePlugin implements IWailaPlugin {
 
    }
    if(!RunningGear.wheel(hit.part())&&settings.components()&&result.damagePercent()>0&&hits.stream().anyMatch(h->h.part()==com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE||h.part()==com.atsuishio.superbwarfare.tools.OBB.Part.SUB_ENGINE))finalDamage*=armor.engineDamageMultiplier;
+   if(armor.aircraft){
+    boolean engineHit=!RunningGear.wheel(hit.part())&&settings.components()&&result.damagePercent()>0&&hits.stream().anyMatch(h->AircraftBalance.engine(h.part()));
+    if(engineHit){tooltip.add(Component.literal("Est. Engine Damage: "+StatText.number(finalDamage)+" HP").withStyle(net.minecraft.ChatFormatting.YELLOW));finalDamage*=armor.aircraftEngineHullFraction;}
+    else finalDamage*=AircraftBalance.hullMultiplier(armor,ammo,false);
+   }
    tooltip.add(Component.literal("Est. Hull Damage: "+StatText.number(finalDamage)+" HP ("+StatText.number(raw>0?finalDamage/raw*100:0)+"%)").withStyle(finalDamage>0?net.minecraft.ChatFormatting.GOLD:net.minecraft.ChatFormatting.RED));
    if(RunningGear.wheel(hit.part()))tooltip.add(Component.literal("Est. "+gear+" Damage: "+StatText.number(wheelDamage)+" HP").withStyle(net.minecraft.ChatFormatting.YELLOW));
    tooltip.add(Component.literal((RunningGear.wheel(hit.part())?gear+" Pen: ":"Pen: ")+StatText.number(result.penetrationChance())+"% | Ricochet: "+StatText.number(result.ricochetChance())+"%").withStyle(net.minecraft.ChatFormatting.AQUA));

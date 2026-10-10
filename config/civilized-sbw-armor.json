@@ -10,7 +10,13 @@
       "chemicalMultiplier": 1,
       "turretMultiplier": 1,
       "engineDamageMultiplier": 1.5,
-      "trackArmor": 3
+      "trackArmor": 3,
+      "aircraft": true,
+      "smallArmsHullMultiplier": 0.2,
+      "heavySmallArmsHullMultiplier": 0.45,
+      "smallArmsMaxCaliber": 20,
+      "smallArmsMaxPenetration": 80,
+      "aircraftEngineHullFraction": 0.25
     },
     "superbwarfare:ac_130h": {
       "front": 5,
@@ -21,7 +27,13 @@
       "chemicalMultiplier": 1,
       "turretMultiplier": 1,
       "engineDamageMultiplier": 1.5,
-      "trackArmor": 3
+      "trackArmor": 3,
+      "aircraft": true,
+      "smallArmsHullMultiplier": 0.2,
+      "heavySmallArmsHullMultiplier": 0.45,
+      "smallArmsMaxCaliber": 20,
+      "smallArmsMaxPenetration": 80,
+      "aircraftEngineHullFraction": 0.25
     },
     "superbwarfare:ah_6": {
       "front": 5,
@@ -32,7 +44,13 @@
       "chemicalMultiplier": 1,
       "turretMultiplier": 1,
       "engineDamageMultiplier": 1.5,
-      "trackArmor": 3
+      "trackArmor": 3,
+      "aircraft": true,
+      "smallArmsHullMultiplier": 0.2,
+      "heavySmallArmsHullMultiplier": 0.45,
+      "smallArmsMaxCaliber": 20,
+      "smallArmsMaxPenetration": 80,
+      "aircraftEngineHullFraction": 0.25
     },
     "superbwarfare:air_sheep": {
       "front": 8,
@@ -98,7 +116,13 @@
       "chemicalMultiplier": 1,
       "turretMultiplier": 1,
       "engineDamageMultiplier": 1.5,
-      "trackArmor": 3
+      "trackArmor": 3,
+      "aircraft": true,
+      "smallArmsHullMultiplier": 0.2,
+      "heavySmallArmsHullMultiplier": 0.45,
+      "smallArmsMaxCaliber": 20,
+      "smallArmsMaxPenetration": 80,
+      "aircraftEngineHullFraction": 0.25
     },
     "superbwarfare:fh_77bw": {
       "front": 3,
@@ -142,7 +166,13 @@
       "chemicalMultiplier": 1,
       "turretMultiplier": 1,
       "engineDamageMultiplier": 1.5,
-      "trackArmor": 3
+      "trackArmor": 3,
+      "aircraft": true,
+      "smallArmsHullMultiplier": 0.2,
+      "heavySmallArmsHullMultiplier": 0.45,
+      "smallArmsMaxCaliber": 20,
+      "smallArmsMaxPenetration": 80,
+      "aircraftEngineHullFraction": 0.25
     },
     "superbwarfare:ju_87": {
       "front": 5,
@@ -153,7 +183,13 @@
       "chemicalMultiplier": 1,
       "turretMultiplier": 1,
       "engineDamageMultiplier": 1.5,
-      "trackArmor": 3
+      "trackArmor": 3,
+      "aircraft": true,
+      "smallArmsHullMultiplier": 0.2,
+      "heavySmallArmsHullMultiplier": 0.45,
+      "smallArmsMaxCaliber": 20,
+      "smallArmsMaxPenetration": 80,
+      "aircraftEngineHullFraction": 0.25
     },
     "superbwarfare:kirov": {
       "front": 8,
@@ -164,7 +200,13 @@
       "chemicalMultiplier": 1,
       "turretMultiplier": 1,
       "engineDamageMultiplier": 1.5,
-      "trackArmor": 3
+      "trackArmor": 3,
+      "aircraft": true,
+      "smallArmsHullMultiplier": 0.2,
+      "heavySmallArmsHullMultiplier": 0.45,
+      "smallArmsMaxCaliber": 20,
+      "smallArmsMaxPenetration": 80,
+      "aircraftEngineHullFraction": 0.25
     },
     "superbwarfare:kv_16": {
       "front": 5,
@@ -241,7 +283,13 @@
       "chemicalMultiplier": 1,
       "turretMultiplier": 1,
       "engineDamageMultiplier": 1.5,
-      "trackArmor": 3
+      "trackArmor": 3,
+      "aircraft": true,
+      "smallArmsHullMultiplier": 0.2,
+      "heavySmallArmsHullMultiplier": 0.45,
+      "smallArmsMaxCaliber": 20,
+      "smallArmsMaxPenetration": 80,
+      "aircraftEngineHullFraction": 0.25
     },
     "superbwarfare:mk_42": {
       "front": 8,
