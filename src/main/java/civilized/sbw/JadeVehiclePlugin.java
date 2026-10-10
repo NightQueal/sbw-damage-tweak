@@ -35,8 +35,8 @@ public final class JadeVehiclePlugin implements IWailaPlugin {
 
    }
    if(!RunningGear.wheel(hit.part())&&settings.components()&&result.damagePercent()>0&&hits.stream().anyMatch(h->h.part()==com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE||h.part()==com.atsuishio.superbwarfare.tools.OBB.Part.SUB_ENGINE))finalDamage*=armor.engineDamageMultiplier;
-   tooltip.add(Component.literal("Est. Hull: "+StatText.number(finalDamage)+" HP ("+StatText.number(raw>0?finalDamage/raw*100:0)+"%)").withStyle(finalDamage>0?net.minecraft.ChatFormatting.GOLD:net.minecraft.ChatFormatting.RED));
-   if(RunningGear.wheel(hit.part()))tooltip.add(Component.literal("Est. Track: "+StatText.number(wheelDamage)+" HP").withStyle(net.minecraft.ChatFormatting.YELLOW));
+   tooltip.add(Component.literal("Est. Hull Damage: "+StatText.number(finalDamage)+" HP ("+StatText.number(raw>0?finalDamage/raw*100:0)+"%)").withStyle(finalDamage>0?net.minecraft.ChatFormatting.GOLD:net.minecraft.ChatFormatting.RED));
+   if(RunningGear.wheel(hit.part()))tooltip.add(Component.literal("Est. Track Damage: "+StatText.number(wheelDamage)+" HP").withStyle(net.minecraft.ChatFormatting.YELLOW));
    tooltip.add(Component.literal((RunningGear.wheel(hit.part())?"Track Pen: ":"Pen: ")+StatText.number(result.penetrationChance())+"% | Ricochet: "+StatText.number(result.ricochetChance())+"%").withStyle(net.minecraft.ChatFormatting.AQUA));
    if(!details)return;
    tooltip.add(Component.literal("Armor").withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
