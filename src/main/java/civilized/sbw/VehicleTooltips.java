@@ -88,11 +88,11 @@ public final class VehicleTooltips {
   if(ammo.blastPenetration>0)line(out,"Blast Penetration: "+StatText.number(ammo.blastPenetration)+" mm");
   if(!Screen.hasShiftDown())return;
   if(ammo.normalization!=0)line(out,"Normalization: "+StatText.number(ammo.normalization)+"\u00b0");
-  if(ProfileSync.client.ricochets())line(out,"Ricochet: "+StatText.number(ammo.ricochetStart)+"-"+StatText.number(ammo.ricochetEnd)+"\u00b0");
+  if(ProfileSync.client.ricochets())line(out,"Ricochet Angle: "+StatText.number(ammo.ricochetStart)+"-"+StatText.number(ammo.ricochetEnd)+"\u00b0");
   line(out,"Caliber: "+StatText.number(ammo.caliber)+" mm");
-  line(out,"Overmatch: "+StatText.number(ammo.overmatchRatio)+"x");
+  line(out,"Overmatch (Caliber/Armor): "+StatText.number(ammo.overmatchRatio)+"x");
   if(ammo.postPenMultiplier!=1)line(out,"Post-Penetration Damage: "+StatText.number(ammo.postPenMultiplier)+"x");
-  if(ammo.blastLeak>0)line(out,"Blast Leakage: "+StatText.number(ammo.blastLeak*100)+"%");
+  if(ammo.blastLeak>0)line(out,"Blocked Blast Damage: "+StatText.number(ammo.blastLeak*100)+"%");
   var index=TimelessAPI.getCommonGunIndex(gun.getGunId(stack));if(index.isEmpty())return;
   try {
    var cache=properties(stack,index.get().getGunData());var pairs=cache.getCache(com.tacz.guns.api.GunProperties.DAMAGE);

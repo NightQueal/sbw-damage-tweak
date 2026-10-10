@@ -18,7 +18,7 @@ public final class VehicleStats {
   if(details){
    out.add(Component.literal("Roof / Bottom: "+StatText.number(v.roof)+" / "+StatText.number(v.bottom)+" mm"));
    out.add(Component.literal("Tracks / Wheels: "+StatText.number(v.trackArmor)+" mm"));
-   out.add(Component.literal("HEAT Protection: "+StatText.number(v.chemicalMultiplier)+"x"));
+   out.add(Component.literal("HEAT Armor: "+StatText.number(v.chemicalMultiplier)+"x"));
    out.add(Component.literal("Turret Armor: "+StatText.number(v.turretMultiplier)+"x"));
    out.add(Component.literal("Engine Damage: "+StatText.number(v.engineDamageMultiplier)+"x"));
   }return out;

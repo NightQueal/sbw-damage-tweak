@@ -14,8 +14,9 @@ public final class JadeVehiclePlugin implements IWailaPlugin {
    var profiles=ProfileSync.clientProfiles;var settings=ProfileSync.client;
    if(profiles==null||settings==null||!settings.enabled()||!(accessor.getEntity() instanceof VehicleEntity v))return;
    var armor=profiles.vehicles.get(DamageCompatibility.id(v));if(armor==null)return;
+   String gear=v.getEngineInfo() instanceof com.atsuishio.superbwarfare.data.vehicle.subdata.EngineInfo.Track?"Track":"Wheel";
    boolean details=accessor.showDetails()||(accessor.getPlayer()!=null&&MountedWeapons.vehicle(accessor.getPlayer())!=null&&CompatConfig.MOUNTED_DETAILS.get());
-   tooltip.add(Component.literal("Tracks L/R: "+StatText.number(v.getLeftWheelHealth())+" / "+StatText.number(v.getRightWheelHealth())+" HP").withStyle(v.getLeftWheelHealth()<=0||v.getRightWheelHealth()<=0?net.minecraft.ChatFormatting.RED:net.minecraft.ChatFormatting.GREEN));
+   tooltip.add(Component.literal(gear+" HP L/R: "+StatText.number(v.getLeftWheelHealth())+" / "+StatText.number(v.getRightWheelHealth())+" HP").withStyle(v.getLeftWheelHealth()<=0||v.getRightWheelHealth()<=0?net.minecraft.ChatFormatting.RED:net.minecraft.ChatFormatting.GREEN));
    if(settings.components()&&v.getEngineInfo() instanceof com.atsuishio.superbwarfare.data.vehicle.subdata.EngineInfo.Track&&(v.getLeftWheelHealth()<=0||v.getRightWheelHealth()<=0))tooltip.add(Component.literal("IMMOBILIZED").withStyle(net.minecraft.ChatFormatting.RED));
    var player=accessor.getPlayer();if(player==null)return;
    var mounted=MountedWeapons.inspect(player,profiles,settings.mounted());
@@ -36,8 +37,8 @@ public final class JadeVehiclePlugin implements IWailaPlugin {
    }
    if(!RunningGear.wheel(hit.part())&&settings.components()&&result.damagePercent()>0&&hits.stream().anyMatch(h->h.part()==com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE||h.part()==com.atsuishio.superbwarfare.tools.OBB.Part.SUB_ENGINE))finalDamage*=armor.engineDamageMultiplier;
    tooltip.add(Component.literal("Est. Hull Damage: "+StatText.number(finalDamage)+" HP ("+StatText.number(raw>0?finalDamage/raw*100:0)+"%)").withStyle(finalDamage>0?net.minecraft.ChatFormatting.GOLD:net.minecraft.ChatFormatting.RED));
-   if(RunningGear.wheel(hit.part()))tooltip.add(Component.literal("Est. Track Damage: "+StatText.number(wheelDamage)+" HP").withStyle(net.minecraft.ChatFormatting.YELLOW));
-   tooltip.add(Component.literal((RunningGear.wheel(hit.part())?"Track Pen: ":"Pen: ")+StatText.number(result.penetrationChance())+"% | Ricochet: "+StatText.number(result.ricochetChance())+"%").withStyle(net.minecraft.ChatFormatting.AQUA));
+   if(RunningGear.wheel(hit.part()))tooltip.add(Component.literal("Est. "+gear+" Damage: "+StatText.number(wheelDamage)+" HP").withStyle(net.minecraft.ChatFormatting.YELLOW));
+   tooltip.add(Component.literal((RunningGear.wheel(hit.part())?gear+" Pen: ":"Pen: ")+StatText.number(result.penetrationChance())+"% | Ricochet: "+StatText.number(result.ricochetChance())+"%").withStyle(net.minecraft.ChatFormatting.AQUA));
    if(!details)return;
    tooltip.add(Component.literal("Armor").withStyle(net.minecraft.ChatFormatting.DARK_AQUA));
    for(var line:VehicleStats.armor(armor,true))tooltip.add(line.copy().withStyle(net.minecraft.ChatFormatting.GRAY));
