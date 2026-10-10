@@ -418,4 +418,28 @@ public final class IntegrationTests {
    v.discard();h.succeed();
   });
  }
+
+ @GameTest(template="empty",timeoutTicks=80,batch="destroyedTrackRecovery")
+ public static void destroyedTrackRecovery(GameTestHelper h){
+  var v=vehicle(h,"yx_100");h.runAtTickTime(8,()->{
+   CompatConfig.ADVANCED_ARMOR.set(true);CompatConfig.COMPONENT_HITS.set(true);
+   v.setLeftWheelHealth(0);v.setRightWheelHealth(50);
+   com.atsuishio.superbwarfare.entity.vehicle.utils.VehicleEffectUtils.handlePartHealth(v);
+   require(v.getLeftWheelHealth()==0,"Destroyed track passively regenerated");
+   require(v.getRightWheelHealth()>50,"Undestroyed track lost normal regeneration");
+   require(v.getLeftWheelDamaged()&&RunningGear.immobilized(v),"Destroyed track did not immobilize tank");
+   try {
+    v.setPower(1);v.setTargetSpeed(1);v.setDeltaRot(1);int checked=0;
+    for(var method:com.atsuishio.superbwarfare.entity.vehicle.utils.VehicleEngineUtils.class.getDeclaredMethods())if(method.getParameterCount()==1&&method.getParameterTypes()[0]==VehicleEntity.class&&(method.getName().endsWith("$power")||method.getName().endsWith("$speed")||method.getName().endsWith("$turn"))){method.setAccessible(true);require(((Number)method.invoke(null,v)).doubleValue()==0,"Destroyed track retains powered input");checked++;}
+    require(checked==3,"Native propulsion redirects were not exercised");
+   }catch(ReflectiveOperationException e){throw new RuntimeException(e);}
+   h.runAtTickTime(20,()->{
+   require(v.getLeftWheelHealth()==0,"Destroyed track regenerated over live ticks");
+   v.setLeftWheelHealth(v.getLeftWheelMaxHealth());
+   com.atsuishio.superbwarfare.entity.vehicle.utils.VehicleEffectUtils.handlePartHealth(v);
+   require(!v.getLeftWheelDamaged()&&!RunningGear.immobilized(v),"Manual repair did not restore tank");
+   CompatConfig.ADVANCED_ARMOR.set(false);v.discard();h.succeed();
+   });
+  });
+ }
 }

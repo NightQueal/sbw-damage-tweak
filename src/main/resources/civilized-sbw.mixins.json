@@ -10,7 +10,9 @@
     "CbcImpactMixin",
     "TaczAttachmentMixin",
     "SbwProjectileProfileMixin",
-    "RunningGearMixin"
+    "RunningGearMixin",
+    "RunningGearHealthMixin",
+    "RunningGearEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1

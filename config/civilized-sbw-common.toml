@@ -46,5 +46,5 @@
  ricochetPitch = 1.8
 
 [inspection]
-	mountedDetails = true
+	mountedDetails = false
  vehicleRange = 200.0
