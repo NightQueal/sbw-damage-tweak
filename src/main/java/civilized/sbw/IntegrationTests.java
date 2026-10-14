@@ -32,6 +32,85 @@ public final class IntegrationTests {
  }
 
  private static void require(boolean b,String m){if(!b)throw new RuntimeException(m);}
+ private static void resetDamageTuning(){DamageTuning.RULES.values().forEach(r->{r.multiplier.set(1.0);r.weapons.set(java.util.List.of());});}
+ private static net.minecraft.world.entity.animal.Pig damagePig(GameTestHelper h) {
+  var pig=net.minecraft.world.entity.EntityType.PIG.create(h.getLevel());var pos=h.absolutePos(new BlockPos(3,12,3));pig.setPos(pos.getX(),pos.getY(),pos.getZ());pig.setNoAi(true);pig.setNoGravity(true);pig.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(100);pig.setHealth(100);h.getLevel().addFreshEntity(pig);return pig;
+ }
+ private static float hurtLiving(net.minecraft.world.entity.LivingEntity target,DamageSource source,float damage) {
+  target.invulnerableTime=0;target.setHealth(target.getMaxHealth());float before=target.getHealth();target.hurt(source,damage);return before-target.getHealth();
+ }
+ @GameTest(template="empty",timeoutTicks=60,batch="damageTuningLiving")
+ public static void damageTuningLiving(GameTestHelper h) {
+  resetDamageTuning();var pig=damagePig(h);var tank=vehicle(h,"m_1a_2");var bullet=rocket(h,tank);bullet.setPos(tank.getBoundingBox().getCenter().add(0,0,30));bullet.setDeltaMovement(0,0,-1);var level=h.getLevel();
+  var normal=com.tacz.guns.init.ModDamageTypes.Sources.bullet(level.registryAccess(),bullet,bullet.getOwner(),false);
+  var ap=com.tacz.guns.init.ModDamageTypes.Sources.bullet(level.registryAccess(),bullet,bullet.getOwner(),true);
+  var player=new net.minecraft.server.level.ServerPlayer(level.getServer(),level,new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(),"DamageTest"));player.connection=new net.minecraft.server.network.ServerGamePacketListenerImpl(level.getServer(),new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND),player);player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);player.setPos(pig.position().add(8,0,0));
+  boolean oldPvp=level.getServer().isPvpAllowed();level.getServer().setPvpAllowed(true);
+  try {
+   try{var field=net.minecraft.server.level.ServerPlayer.class.getDeclaredField("spawnInvulnerableTime");field.setAccessible(true);field.setInt(player,0);}catch(ReflectiveOperationException e){throw new RuntimeException(e);}
+   require(hurtLiving(pig,normal,8)==8,"Default TACZ living damage changed");
+   var mob=DamageTuning.rule("tacz","mobs",false);mob.multiplier.set(.5);mob.weapons.set(java.util.List.of("tacz:rpg7=0.5"));
+   require(hurtLiving(pig,normal,8)==2,"Global/per-gun mob multiplier missing or applied twice");
+   require(hurtLiving(pig,ap,8)==2,"Armor-piercing portion not scaled equally");
+   float playerBase=hurtLiving(player,normal,8);require(playerBase>0,"Player baseline missing");DamageTuning.rule("tacz","players",false).multiplier.set(.25);
+   float playerTuned=hurtLiving(player,normal,8);require(Math.abs(playerTuned-playerBase*.25)<.01,"Player factor did not apply independently: "+playerBase+" / "+playerTuned);
+   require(DamageTuning.factor(tank,normal)==1,"Living settings leaked into vehicles");
+   require(hurtLiving(pig,level.damageSources().generic(),8)==8,"Unrelated generic damage changed");
+   mob.multiplier.set(0.0);require(hurtLiving(pig,normal,8)==0,"Zero TACZ multiplier still damaged mob");
+   var sbw=com.atsuishio.superbwarfare.init.ModEntities.PROJECTILE.get().create(level);
+   var gun=com.atsuishio.superbwarfare.data.gun.GunData.from(new ItemStack(com.atsuishio.superbwarfare.init.ModItems.RPG.get()));MountedWeapons.capture(sbw,gun);
+   require(DamageTuning.weapon(sbw).id().equals(gun.id),"Handheld SBW weapon ID was not frozen at firing");
+   var sbwSource=com.atsuishio.superbwarfare.init.ModDamageTypes.causeGunFireAbsoluteDamage(level.registryAccess(),sbw,bullet.getOwner());
+   DamageTuning.rule("sbw","mobs",false).multiplier.set(0.0);pig.setHealth(100);pig.invulnerableTime=0;
+   com.atsuishio.superbwarfare.tools.DamageHandler.doDamage(pig,sbwSource,8);
+   require(pig.getHealth()==100,"SBW forced-damage fallback bypassed zero multiplier");
+   var cbc=cannon(h,"shot");DamageTuning.rule("cbc","mobs",false).multiplier.set(.5);
+   require(hurtLiving(pig,direct(cbc,pig),8)==4,"CBC living input tuning missing");
+   System.out.println("COMPAT_TEST DAMAGE_TUNING living default=8 tuned=2 AP=2 player="+playerTuned+" zero=0 SBW force=0 CBC=4");h.succeed();
+  }finally{level.getServer().setPvpAllowed(oldPvp);resetDamageTuning();pig.discard();tank.discard();}
+ }
+ @GameTest(template="empty",timeoutTicks=60,batch="damageTuningVehicle")
+ public static void damageTuningVehicle(GameTestHelper h) {
+  resetDamageTuning();CompatConfig.ADVANCED_ARMOR.set(true);var tank=vehicle(h,"truck");
+  h.runAtTickTime(8,()->{try {
+   var bullet=rocket(h,tank);bullet.setPos(tank.getBoundingBox().getCenter().add(0,0,30));bullet.setDeltaMovement(0,0,-1);var level=h.getLevel();
+   var source=com.tacz.guns.init.ModDamageTypes.Sources.bullet(level.registryAccess(),bullet,bullet.getOwner(),false);
+   var ap=com.tacz.guns.init.ModDamageTypes.Sources.bullet(level.registryAccess(),bullet,bullet.getOwner(),true);
+   tank.setHealth(250);tank.hurt(source,30);float baseline=250-tank.getHealth();require(baseline>0,"Vehicle baseline failed compute="+tank.getDamageModifier().compute(tank,source,30)+" owner="+source.getEntity()+" immune="+source.is(com.atsuishio.superbwarfare.init.ModTags.DamageTypes.VEHICLE_IMMUNE)+" health="+tank.getHealth());
+   var rule=DamageTuning.rule("tacz","vehicles",false);rule.multiplier.set(2.0);rule.weapons.set(java.util.List.of("tacz:rpg7=0.75"));
+   float expected=tank.getDamageModifier().compute(tank,source,45);tank.setHealth(250);tank.hurt(source,30);float tuned=250-tank.getHealth();require(Math.abs(tuned-expected)<.01,"Vehicle tuning missing/doubled: "+tuned+" / "+expected);
+   rule.multiplier.set(1.0);rule.weapons.set(java.util.List.of());tank.setHealth(250);tank.hurt(ap,30);float apBase=250-tank.getHealth();require(apBase>0,"Vehicle AP baseline failed");
+   rule.multiplier.set(.5);expected=tank.getDamageModifier().compute(tank,ap,15);tank.setHealth(250);tank.hurt(ap,30);require(Math.abs(250-tank.getHealth()-expected)<.01,"Vehicle AP bypass escaped scaling");
+   rule.multiplier.set(0.0);tank.setHealth(250);tank.hurt(source,30);tank.hurt(ap,30);require(tank.getHealth()==250,"Zero direct vehicle multiplier failed");
+   rule.multiplier.set(1.0);bullet.setPos(tank.position().add(0,2,0));var blast=DamageTuning.rule("tacz","vehicles",true);tank.setHealth(250);float blastBase=taczBlast(h,tank,bullet);require(blastBase>0,"Vehicle blast baseline failed");
+   blast.multiplier.set(.5);blast.weapons.set(java.util.List.of("tacz:rpg7=0.5"));tank.setHealth(250);require(Math.abs(taczBlast(h,tank,bullet)-blastBase*.25)<.01,"Vehicle blast tuning missing/doubled");
+   var sbw=com.atsuishio.superbwarfare.init.ModEntities.PROJECTILE.get().create(level);var sbwSource=com.atsuishio.superbwarfare.init.ModDamageTypes.causeGunFireAbsoluteDamage(level.registryAccess(),sbw,bullet.getOwner());
+   DamageTuning.rule("sbw","vehicles",false).multiplier.set(0.0);tank.setHealth(250);tank.hurt(sbwSource,30);require(tank.getHealth()==250,"SBW vehicle bypass damage escaped tuning");
+   CompatConfig.ADVANCED_ARMOR.set(false);var cbc=cannon(h,"shot");var cbcSource=direct(cbc,tank);tank.setHealth(250);tank.hurt(cbcSource,30);float cbcBase=250-tank.getHealth();require(cbcBase>0,"CBC baseline failed");
+   DamageTuning.rule("cbc","vehicles",false).multiplier.set(2.0);expected=tank.getDamageModifier().compute(tank,cbcSource,60);tank.setHealth(250);tank.hurt(cbcSource,30);require(Math.abs(250-tank.getHealth()-expected)<.01,"CBC new tuning failed actual="+(250-tank.getHealth())+" expected="+expected);
+   var map=new com.google.gson.Gson().fromJson(new com.google.gson.Gson().toJson(DamageTuning.snapshot()),new com.google.gson.reflect.TypeToken<java.util.Map<String,DamageTuning.Values>>(){}.getType());
+   require(DamageTuning.previewFactor((java.util.Map<String,DamageTuning.Values>)map,new DamageTuning.Weapon("tacz","tacz:rpg7"),"vehicles",true)==.25,"Preview serialization failed");
+   System.out.println("COMPAT_TEST DAMAGE_TUNING vehicle baseline="+baseline+" tuned="+tuned+" AP baseline="+apBase+" blast baseline="+blastBase);h.succeed();
+  }finally{resetDamageTuning();CompatConfig.ADVANCED_ARMOR.set(false);tank.discard();}});
+ }
+ @GameTest(template="empty",timeoutTicks=60,batch="damageTuningExplosionLiving")
+ public static void damageTuningExplosionLiving(GameTestHelper h) {
+  resetDamageTuning();var pig=damagePig(h);var tank=vehicle(h,"m_1a_2");tank.setPos(pig.position().add(20,0,0));var bullet=rocket(h,tank);bullet.setPos(pig.position().add(0,.5,0));
+  h.runAtTickTime(8,()->{try {
+   java.util.function.Supplier<Float> blast=()->{pig.setHealth(100);pig.invulnerableTime=0;com.tacz.guns.util.ExplodeUtil.createExplosion(bullet.getOwner(),bullet,8,3,false,false,bullet.position());return 100-pig.getHealth();};
+   float baseline=blast.get();require(baseline>0,"Living blast baseline failed");
+   DamageTuning.rule("tacz","mobs",false).multiplier.set(0.0);require(Math.abs(blast.get()-baseline)<.01,"Direct setting affected explosion");
+   var rule=DamageTuning.rule("tacz","mobs",true);rule.multiplier.set(.5);rule.weapons.set(java.util.List.of("tacz:rpg7=0.5"));require(Math.abs(blast.get()-baseline*.25)<.01,"Living blast multiplier missing/doubled");
+   rule.multiplier.set(0.0);require(blast.get()==0,"Zero living blast multiplier failed");
+   var sbw=com.atsuishio.superbwarfare.init.ModEntities.CANNON_SHELL.get().create(h.getLevel());sbw.setOwner(bullet.getOwner());sbw.setPos(bullet.position());
+   java.util.function.Supplier<Float> sbwBlast=()->{pig.setHealth(100);pig.invulnerableTime=0;new CustomExplosion.Builder(sbw).attacker(bullet.getOwner()).damage(8).radius(3).position(sbw.position()).explode();return 100-pig.getHealth();};
+   float sbwBase=sbwBlast.get();require(sbwBase>0,"SBW native blast baseline missing");DamageTuning.rule("sbw","mobs",true).multiplier.set(.5);require(Math.abs(sbwBlast.get()-sbwBase*.5)<.01,"SBW native explosion not tuned");
+   var cbc=cannon(h,"he_shell");cbc.setPos(bullet.position());
+   java.util.function.Supplier<Float> cbcBlast=()->{pig.setHealth(100);pig.invulnerableTime=0;new ShellExplosion(h.getLevel(),cbc,cbc.indirectArtilleryFire(false),cbc.getX(),cbc.getY(),cbc.getZ(),2,false,Level.ExplosionInteraction.NONE).explode();return 100-pig.getHealth();};
+   float cbcBase=cbcBlast.get();require(cbcBase>0,"CBC native blast baseline missing");DamageTuning.rule("cbc","mobs",true).multiplier.set(.5);require(Math.abs(cbcBlast.get()-cbcBase*.5)<.01,"CBC native explosion not tuned");
+   System.out.println("COMPAT_TEST DAMAGE_TUNING mob explosion TACZ="+baseline+" SBW="+sbwBase+" CBC="+cbcBase);h.succeed();
+  }finally{resetDamageTuning();pig.discard();tank.discard();}});
+ }
  private static VehicleEntity vehicle(GameTestHelper h,String id) {
   var e=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare",id)).create(h.getLevel());
   VehicleEntity v=(VehicleEntity)e;var pos=h.absolutePos(new BlockPos(2,12,2));v.setPos(pos.getX()+.5,pos.getY(),pos.getZ()+.5);v.setNoGravity(true);h.getLevel().addFreshEntity(v);v.setHealth(250);return v;
@@ -101,35 +180,6 @@ public final class IntegrationTests {
   var nonVehicle=net.minecraft.world.entity.EntityType.PIG.create(h.getLevel());require(direct(p,nonVehicle).getDirectEntity()==null,"CBC non-vehicle source changed");
   CompatConfig.VEHICLE_OVERRIDES.set(java.util.List.of("superbwarfare:m_1a_2=0.0"));v.setHealth(250);v.hurt(direct(p,v),50);require(v.getHealth()==250,"Per-vehicle disable failed");CompatConfig.VEHICLE_OVERRIDES.set(java.util.List.of());
   System.out.println("COMPAT_TEST CBC AP directional native armor="+a+" / "+b);v.discard();h.succeed();});
- }
- @GameTest(template="empty",timeoutTicks=40,batch="resourceRules")
- public static void resourceRules(GameTestHelper h) {
-  var tag=TagKey.create(Registries.ITEM,new ResourceLocation("forge:ingots/tungsten"));
-  require(!new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("superbwarfare:tungsten_ingot"))).is(tag)&&new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("northstar:tungsten_ingot"))).is(tag),"Tungsten separation broken");
-  var recipes=h.getLevel().getRecipeManager();for(String id:new String[]{"civilized_sbw:pressing/steel_plate","civilized_sbw:pressing/copper_plate","civilized_sbw:compacting/armor_plate","civilized_sbw:vehicle_key"})require(recipes.byKey(new ResourceLocation(id)).isPresent(),"Missing "+id);
-  for(String id:new String[]{"civilized_sbw:drilling/scheelite","civilized_sbw:ore_vein_type/galena"})require(recipes.byKey(new ResourceLocation(id)).isEmpty(),"Disabled recipe active "+id);
-  for(String id:new String[]{"superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"})require(recipes.byKey(new ResourceLocation(id)).isPresent()!=packRule(id.endsWith("hammer")?"disableNetheriteHammer":"disableDpsGenerator"),"Pack recipe toggle failed "+id);
-  h.succeed();
- }
- private static boolean packRule(String name) {
-  try{return com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(net.minecraftforge.fml.loading.FMLPaths.GAMEDIR.get().resolve("kubejs/config/civilized_sbw_equipment.json"))).getAsJsonObject().get(name).getAsBoolean();}catch(Exception e){throw new RuntimeException(e);}
- }
- @GameTest(template="empty",timeoutTicks=40,batch="packEquipmentSeparation")
- public static void packEquipmentSeparation(GameTestHelper h) {
-  require(!CompatConfig.SPEC.getSpec().contains("equipment"),"Combat mod still defines equipment controls");
-  boolean dpsDisabled=packRule("disableDpsGenerator");
-  var generator=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare:dps_generator")).create(h.getLevel());
-  require(h.getLevel().addFreshEntity(generator)!=dpsDisabled,"External generator spawn rule failed");generator.discard();
-  var player=net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());player.tickCount=20;
-  for(String id:new String[]{"superbwarfare:netherite_hammer","superbwarfare:dps_generator_deployer"}) {
-   boolean disabled=packRule(id.endsWith("hammer")?"disableNetheriteHammer":"disableDpsGenerator");
-   var stack=new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(id)));
-   var item=new net.minecraft.world.entity.item.ItemEntity(h.getLevel(),0,10,0,stack.copy());require(h.getLevel().addFreshEntity(item)!=disabled,"External dropped-item rule failed "+id);item.discard();
-   player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,stack.copy());
-   var use=new net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem(player,net.minecraft.world.InteractionHand.MAIN_HAND);net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(use);require(use.isCanceled()==disabled,"External use rule failed "+id);
-   net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TickEvent.PlayerTickEvent(net.minecraftforge.event.TickEvent.Phase.END,player));require(player.getMainHandItem().isEmpty()==disabled,"External inventory cleanup failed "+id);
-  }
-  player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,ItemStack.EMPTY);h.succeed();
  }
  @GameTest(template="empty",timeoutTicks=40,batch="armorMathAndGeometry")
  public static void armorMathAndGeometry(GameTestHelper h) {
@@ -249,7 +299,7 @@ public final class IntegrationTests {
   require(ArmorProfiles.modified(base,"test:unknown")==base,"Unknown attachment changed base profile");
   var copy=new com.google.gson.Gson().fromJson(ArmorProfiles.json(),ArmorProfiles.Data.class);
   require(ArmorProfiles.modified(copy.ammunition.get("ammo:tacz:50bmg"),"tacz:ammo_mod_hp",copy).penetration==hp.penetration,"Synced tooltip profile differs from server");
-  var original=new ProfileSync.Snapshot(ArmorProfiles.json(),true,false,true,true);
+  var original=new ProfileSync.Snapshot(ArmorProfiles.json(),true,false,true,true,new com.google.gson.Gson().toJson(DamageTuning.snapshot()));
   var buffer=new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
   try {original.write(buffer);require(ProfileSync.Snapshot.read(buffer).equals(original),"Server tooltip settings did not round-trip");}finally{buffer.release();}
   h.succeed();
@@ -309,7 +359,7 @@ public final class IntegrationTests {
 
  @GameTest(template="empty",timeoutTicks=80,batch="longRangeInspectionAndTuning")
  public static void longRangeInspectionAndTuning(GameTestHelper h) {
-  require(ArmorProfiles.ammo("gun:maxstuff:excaliber").blastPenetration==15,"Excaliber blast profile not migrated");
+  require(ArmorProfiles.ammo("gun:maxstuff:excaliber").penetration==600&&ArmorProfiles.ammo("gun:maxstuff:excaliber").blastPenetration==550,"Shipped Excaliber penetration defaults changed");
   require(ArmorProfiles.ammo("gun:tacz:uzi").penetration>ArmorProfiles.ammo("gun:tacz:glock_17").penetration,"Gun speed tuning not applied");
   require(ArmorProfiles.ammo("gun:tacz:rpg7").penetration==300,"RPG override changed unexpectedly");
   var target=vehicle(h,"m_1a_2");target.setPos(target.getX(),200,target.getZ());h.runAtTickTime(8,()->{

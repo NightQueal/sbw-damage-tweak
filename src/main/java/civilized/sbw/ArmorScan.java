@@ -45,8 +45,9 @@ public final class ArmorScan {
        gun.selectedAmmoType.set(mode);String gunKey=MountedWeapons.gunKey(gun),ammoKey=MountedWeapons.ammoKey(gun);
        discoveredAmmo.add(gunKey);discoveredAmmo.add(ammoKey);String effective=MountedWeapons.key(gun,profiles);
        String projectile=gun.get(com.atsuishio.superbwarfare.data.gun.GunProp.PROJECTILE).getId();
+       // GunData ID is captured on projectiles for damage tuning, independent of armor mapping.
        boolean supported=projectile.startsWith("superbwarfare:")&&ArmorProfiles.ammo(effective)!=null;
-       Map<String,Object> row=new LinkedHashMap<>();row.put("vehicleId",id);row.put("weapon",weapon.getKey());row.put("ammoMode",mode);row.put("ammoId",MountedWeapons.ammoId(gun));row.put("projectileId",projectile);row.put("mapped",supported);row.put("effectiveProfileKey",supported?effective:"");row.put("suggestedGunProfileKey",gunKey);row.put("suggestedAmmoProfileKey",ammoKey);mounted.add(row);
+       Map<String,Object> row=new LinkedHashMap<>();row.put("vehicleId",id);row.put("weapon",weapon.getKey());row.put("damageTuningId",MountedWeapons.damageKey(gun));row.put("ammoMode",mode);row.put("ammoId",MountedWeapons.ammoId(gun));row.put("projectileId",projectile);row.put("mapped",supported);row.put("effectiveProfileKey",supported?effective:"");row.put("suggestedGunProfileKey",gunKey);row.put("suggestedAmmoProfileKey",ammoKey);mounted.add(row);
       }
      }
     } else if(entity instanceof Projectile && (id.startsWith("createbigcannons:")||id.startsWith("superbwarfare:"))) {

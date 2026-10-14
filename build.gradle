@@ -2,9 +2,9 @@ plugins {
  id 'java'
  id 'net.minecraftforge.gradle' version '6.0.54'
 }
-version = '1.7.0'
+version = '1.8.0'
 group = 'civilized.sbw'
-base { archivesName = 'civilized-sbw-compat' }
+base { archivesName = 'sbw-dmg-tweak' }
 java { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 minecraft {
  mappings channel: 'official', version: '1.20.1'
@@ -29,7 +29,7 @@ dependencies {
 }
 
 jar {
- exclude 'civilized/sbw/IntegrationTests.class'
+ exclude 'civilized/sbw/IntegrationTests*.class'
  exclude 'data/civilized_sbw/structures/empty.nbt'
  manifest { attributes(['MixinConfigs':'civilized-sbw.mixins.json']) }
  finalizedBy 'reobfJar'

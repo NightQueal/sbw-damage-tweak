@@ -48,7 +48,7 @@ public final class CompatConfig {
   b.pop();b.push("inspection");
   MOUNTED_DETAILS=b.comment("Client-side: automatically expand armor/penetration details while riding SBW, so holding the dismount key is unnecessary.").define("mountedDetails",false);
   INSPECTION_RANGE=b.comment("Client-side Jade vehicle inspection range while holding a TACZ gun or riding an SBW vehicle. Mounted weapons use their muzzle ray. Loaded entities only; solid blocks obstruct it. Does not change interaction reach.").defineInRange("vehicleRange",200.0,16.0,256.0);
-  b.pop();SPEC=b.build();
+  b.pop();DamageTuning.define(b);SPEC=b.build();
  }
  private static boolean validSound(Object value){return value instanceof String s&&net.minecraft.resources.ResourceLocation.tryParse(s)!=null;}
  private static boolean validEntry(Object entry) {

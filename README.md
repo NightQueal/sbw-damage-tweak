@@ -1,14 +1,37 @@
-Forge 1.20.1 compatibility for Superb Warfare, TACZ and Create Big Cannons. 
+# SBW Damage Tweak
+
+A Forge 1.20.1 mod adding configurable combat compatibility between **Superb Warfare**, **Timeless and Classics Zero (TACZ)**, and **Create Big Cannons**.
 
 ## Features
-- Attachment-aware FMJ/HP/incendiary/HE/slug vehicle penetration and server-synchronized gun/attachment tooltips. Hold Shift on a gun for detail.
-- On-demand /sbwcompat armor scan report for unmapped vehicles, TACZ guns/ammo and projectile IDs.
-- Optional per-vehicle armor, ammunition penetration, glancing-hit rejection and native engine-hit routing. See [ARMOR.md](docs/ARMOR.md).
-- Correct TACZ explosions to use configured blast damage through SBW's distance/exposure formula.
-- Supply projectile/shooter attribution for CBC vehicle hits and supported shell explosions.
-- Configurable prevention of repeated CBC direct impacts on the same vehicle.
-- Separate global, gun/projectile and vehicle input multipliers. Defaults are **1.0**, with no replacement armor tiers or damage caps.
 
-### 1.7.0 aircraft balance
-Aircraft profiles reduce non-explosive small-arms structural damage: 20% for sub-12 mm and 45% for 12–under-20 mm, only up to 80 mm nominal penetration. Blasts, HE/HEAT/APHE, cannon calibers and high-penetration endgame weapons retain full structure scaling. Direct engine hits damage native engine HP separately and pass 25% of engine damage to hull HP. Destroyed aircraft engines require repair before passive recovery. Native flight behavior remains in control of engine failure.
-Applies to A10, AC130, J16, Ju87, AH6, Mi28, drone and Kirov profiles. All thresholds/factors are editable in armor JSON. includeDefaultAircraftProfiles adds missing aircraft balance fields on upgrade without overwriting existing values. Existing tank profile values and tank damage rules are preserved. Jade displays engine HP and predicted engine/hull damage.
+- Vehicle armor profiles, gun-specific penetration, ammunition attachment effects, and angle-based ricochets.
+- Separate engine, hull, wheel, and track damage, with disabled tracks preventing powered tank movement.
+- TACZ explosion compatibility and CBC projectile attribution.
+- Independent global and per-weapon damage multipliers for direct hits and explosions against vehicles, players, and mobs.
+- Impact sounds, TACZ penetration statistics, and optional Jade vehicle inspection.
+
+Unmapped armor hits retain native behavior. Armor profiles are gameplay estimates rather than physical simulations.
+
+## Installation
+
+Install the same version on the server and clients. Requires Minecraft 1.20.1, Forge 47, Superb Warfare 0.8.9.1, TACZ 1.1.8, and Create Big Cannons 5.11.3, along with their dependencies. Jade 11.13.2 is optional for the inspection overlay.
+
+[Download 1.8.0](https://github.com/NightQueal/sbw-damage-tweak/raw/main/dist/sbw-dmg-tweak-1.8.0.jar). Remove the previous version before installing.
+
+## Configuration
+
+Forge generates `config/civilized-sbw-common.toml` and the mod generates `config/civilized-sbw-armor.json`. Multiplayer combat uses the server settings. Restart after editing and reconnect clients to refresh inspection data.
+
+New damage multipliers default to **1.0**. Advanced armor is opt-in through `armor.advancedArmor`.
+
+- [Damage tuning and examples](docs/DAMAGE-TUNING.md)
+- [Armor and component damage](docs/ARMOR.md)
+- [Compatibility details](docs/COMPATIBILITY.md)
+- [Building and testing](docs/DEVELOPMENT.md)
+- [Changelog](CHANGELOG.md)
+
+## Issues and license
+
+Report issues with mod versions, reproduction steps, and relevant logs through [GitHub Issues](https://github.com/NightQueal/sbw-damage-tweak/issues).
+
+[MIT licensed](LICENSE). Unofficial compatibility mod; not affiliated with the supported mod teams.

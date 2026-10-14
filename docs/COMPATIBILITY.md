@@ -1,54 +1,38 @@
-# SBW damage compatibility 1.3.0
+# Compatibility
 
-This release replaces the archived broad damage profiles with scoped compatibility corrections. SBW's own weapons, vehicle recipes and armor definitions are unchanged.
+## Supported versions
 
-## What was wrong
-TACZ's ProjectileExplosion stores configured blast damage in its power field. SBW removes vehicles from the explosion affected list and treats this as a vanilla explosion, recalculating from radius and exposure rather than configured damage. The correction reads TACZ's configured damage and uses SBW's existing quadratic impact/exposure formula, then calls the original VehicleEntity.hurt path. Damage-source type is preserved.
+Minecraft 1.20.1 and Forge 47, tested with Forge 47.4.26:
 
-CBC 5.11.3 creates CannonDamageSource with only damage type and the armor-bypass flag. Both attacker and direct projectile are absent. SBW's early same-driver check compares attacker to last driver; when both are null, it rejects the hit. The correction supplies the actual projectile and its owner when known. If there is no known owner, the projectile itself is the attacker; this avoids null/null rejection and gives native directional/source checks a position. Team protection can only identify a team if CBC provides an owner.
+| Mod | Tested version |
+| --- | --- |
+| Superb Warfare | 0.8.9.1 hotfix, commit 993063bed |
+| TACZ | 1.1.8 |
+| Create Big Cannons | 5.11.3 |
+| Create | 6.0.8 |
+| Jade (optional) | 11.13.2 |
+| Explosion Overhaul (optional) | 0.2.3.0 |
 
-CBC shell, impact, flak and mortar-stone explosions keep their native radius-based blast amount; they do not have TACZ's independent damage field. Attribution is fixed before SBW armor. Utility smoke/fluid/shrapnel-release explosion classes are not intercepted. Direct hits implemented by CBC's AbstractCannonProjectile/AbstractBigCannonProjectile receive attribution; separate addon projectile classes that do not inherit these paths may need additional integration.
+Install the supported mods' own dependencies. This mod does not bundle their classes or jars.
 
-CBC can repeatedly damage the same entity while a projectile remains inside its bounding box. The optional default-on safeguard uses CBC's existing per-projectile untouchable-entity mechanism to allow one direct impact per vehicle. It still permits hits on other vehicles and separate blast damage. It does not remove the projectile or create a damage cap.
+## Explosion and projectile compatibility
 
-## Configuration
-Instance-wide config: config/civilized-sbw-common.toml. Forge generates it when the mod loads. Every world in the instance uses the same settings; the dedicated server's file controls multiplayer damage. Restart after config edits. Existing per-world configs are no longer read. To migrate customized settings, copy the old world's serverconfig/civilized-sbw-server.toml into config/civilized-sbw-common.toml before launching this version.
+TACZ stores configured explosion damage separately from radius. The vehicle compatibility path uses that configured damage with SBW's distance/exposure calculation, then calls native vehicle damage handling.
 
-Compatibility toggles:
-- taczExplosionFix: enable/disable the TACZ blast correction.
-- cbcAttributionFix: enable/disable CBC direct/blast attribution and its input tuning.
-- cbcOneDirectHitPerVehicle: enable/disable the CBC repeat-impact safeguard (requires attribution fix).
-- debugDamage: log damage/exposure during testing; normally false.
+CBC damage sources can omit shooter/projectile attribution. Vehicle hits receive the projectile and its owner, or the projectile as attacker when ownerless, allowing SBW's native ownership and direction checks to run. Supported shell, impact, flak, and mortar-stone explosions retain CBC's radius-based damage formula.
 
-Balance:
-- taczExplosionMultiplier: global TACZ blast multiplier.
-- cbcDirectMultiplier: global CBC direct-hit multiplier.
-- cbcExplosionMultiplier: global CBC blast multiplier.
-- taczGunMultipliers: exact gun ID = additional blast multiplier.
-- cbcDirectProjectileMultipliers: exact projectile ID = additional direct-hit multiplier.
-- cbcExplosionProjectileMultipliers: exact projectile ID = additional blast multiplier.
-- vehicleMultipliers: exact vehicle ID = additional factor for compatibility-handled hits only.
+The repeat-impact safeguard allows one CBC direct hit per vehicle per projectile. Separate explosion damage and other vehicles remain hittable.
 
-All multipliers default to 1.0. Global, matching projectile/gun, and matching vehicle factors multiply together BEFORE SBW armor. Entries accept 0 through 1000; zero disables that damage path. Invalid entries are rejected by Forge's config validation. Later duplicate IDs override earlier entries. Unlisted IDs use 1.0. No heavy/medium/light replacement profiles or flat reductions/caps are imposed.
+The new damage controls retain native damage-source flags and ownership. CBC source metadata distinguishes direct impacts from explosions without changing its source object for player/mob damage.
 
-Example OPTIONAL first CBC balance trial (not installed):
-cbcDirectProjectileMultipliers = ["createbigcannons:shot=4.0", "createbigcannons:ap_shot=6.0", "createbigcannons:ap_shell=6.0", "createbigcannons:he_shell=2.0"]
-Keep global direct and blast multipliers at 1.0 initially. On an M1A2, before any native directional script, default solid/AP inputs 30/50 become 2/6 health damage. The optional 4x/6x profile becomes 20/56. These are proposed test values, not PvP-validated balance. HE remains focused on blast damage; autocannon is not globally boosted.
+## Coverage and limitations
 
-## Tests and limitations
-Six isolated Forge 47.4.26 integration tests passed both without and with Explosion Overhaul 0.2.3.0. The instance uses Forge 47.4.10; required config API methods were checked in that installed Forge jar. Tests covered TACZ original/corrected blast, CBC actual native direct sources and HE explosions, a real AP-shot flight, pre-armor/global/per-projectile/per-vehicle configuration, preserved ordinary-bullet immunity/custom modifier pipeline, non-vehicle scope, recipes and disabled DPS enforcement.
-Measured fixture health loss: TACZ blast 0.6357 original / 8.6735 corrected; CBC solid 0 original / 2 corrected; CBC HE blast 0 original / 11.8501 corrected; actual CBC AP flight 6 with repeat-hit protection, versus 24 in the earlier unprotected fixture. These are fixture measurements, not guaranteed hit damage in gameplay.
+Advanced armor applies to mapped projectile/vehicle profiles, including supported SBW mounted weapons. Unknown armor combinations retain native behavior. Damage tuning does not require an armor mapping.
 
-The native armor/custom-modifier pipeline is retained. CBC continues to use its native axis-aligned entity hit detection; this release does not replace that with SBW's detailed hull hitboxes. Full-pack client launch and multiplayer combat balance have not been tested. User saves are not edited.
+TACZ add-on gun packs use their exact gun IDs. SBW mounted weapons use keys reported by the armor scan; CBC uses projectile entity IDs. Add-on projectiles that bypass the intercepted firing/damage paths may require additional integration.
 
-Source references:
-- SBW installed commit: https://github.com/Mercurows/SuperbWarfare/blob/993063bed/src/main/kotlin/com/atsuishio/superbwarfare/event/LivingEventHandler.kt
-- CBC matching version: https://github.com/Cannoneers-of-Create/CreateBigCannons/blob/v5.11.3%2Bmc.1.20.1/src/main/java/rbasamoyai/createbigcannons/munitions/big_cannon/AbstractBigCannonProjectile.java
+Melee, beams, scripted health changes and secondary effects without projectile attribution are outside the gun-damage controls. Explosion radius and terrain destruction are unchanged.
 
-## Pack equipment rules (1.5.1)
-Equipment restrictions no longer belong to the combat jar. See [optional KubeJS pack extras](../pack-extras/README.md). Existing CIVILIZED restrictions are retained by those scripts, with independent JSON toggles and no dependency on the combat mod.
+Jade inspection requires loaded entities and respects obstruction. Its range does not change interaction reach. Armor and penetration values are gameplay estimates; multiplayer balance still needs playtesting.
 
-## Optional advanced armor (1.2.1)
-See ARMOR.md. With advancedArmor enabled, mapped projectile/vehicle combinations replace the native armor modifier output. Unknown sources and vehicles retain native armor. The compatibility baseline measurements above describe advancedArmor disabled.
-
-Version 1.3.0 adds attachment-aware penetration and server-synchronized gun/ammunition tooltips; see ARMOR.md. Both client and server must update together.
+No recipes, equipment restrictions, ore generation changes or pack scripts are included in this mod.

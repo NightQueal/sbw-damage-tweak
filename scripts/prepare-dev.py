@@ -1,5 +1,5 @@
 """Copy known dependencies into this checkout; never modify the Minecraft instance."""
-import argparse, pathlib, json, hashlib, shutil, zipfile
+import argparse, pathlib, json, hashlib, zipfile
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument("instance",type=pathlib.Path,help="Minecraft instance containing mods/")
 parser.add_argument("--with-explosion-overhaul",action="store_true",help="Include a copy even if its instance jar is disabled")
@@ -18,5 +18,4 @@ for row in rows:
  prepared.append((row["local"],data))
 (root/"runtime-mods").mkdir(exist_ok=True)
 for name,data in prepared:(root/"runtime-mods"/name).write_bytes(data)
-shutil.copytree(root/"test-fixtures/kubejs",root/"test-run/kubejs",dirs_exist_ok=True)
 print("Prepared",len(prepared),"local dependency jars. The source instance was not modified.")

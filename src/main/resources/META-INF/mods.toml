@@ -3,9 +3,9 @@ loaderVersion="[47,)"
 license="MIT"
 [[mods]]
 modId="civilized_sbw"
-version="1.7.0"
+version="1.8.0"
 displayName="CIVILIZED SBW Compatibility"
-description="Configurable vehicle armor and penetration for TACZ, Create Big Cannons and SBW mounted weapons, with combat inspection and impact feedback."
+description="Configurable vehicle armor, penetration and weapon damage against vehicles, players and mobs for TACZ, Create Big Cannons and SBW, with combat inspection and impact feedback."
 [[dependencies.civilized_sbw]]
 modId="forge"
 mandatory=true

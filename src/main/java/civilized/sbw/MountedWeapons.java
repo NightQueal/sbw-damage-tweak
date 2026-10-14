@@ -16,10 +16,13 @@ public final class MountedWeapons {
  public static String ammoId(GunData data){return data.selectedAmmoConsumer().getAmmo();}
  public static String gunKey(GunData data){return "sbwgun:"+data.get(GunProp.NAME)+"|"+ammoId(data);}
  public static String ammoKey(GunData data){return "sbwammo:"+ammoId(data);}
+ public static String damageKey(GunData data){return data.stack.is(ModItems.VEHICLE_GUN.get())?gunKey(data):data.id;}
  public static String key(GunData data,ArmorProfiles.Data profiles){String gun=gunKey(data);return profiles.ammunition.containsKey(gun)?gun:ammoKey(data);}
  public static ArmorProfiles.Ammo profile(GunData data,ArmorProfiles.Data profiles){return profiles.ammunition.get(key(data,profiles));}
  public static void capture(Entity entity,GunData data) {
-  if(!(entity instanceof Projectile)||!data.stack.is(ModItems.VEHICLE_GUN.get()))return;
+  if(!(entity instanceof Projectile))return;
+  entity.getPersistentData().putString(DamageTuning.SBW_WEAPON_TAG,damageKey(data));
+  if(!data.stack.is(ModItems.VEHICLE_GUN.get()))return;
   entity.getPersistentData().putString(AMMO_TAG,ammoKey(data));entity.getPersistentData().putString(GUN_TAG,gunKey(data));
  }
  public static String projectileKey(Entity projectile) {

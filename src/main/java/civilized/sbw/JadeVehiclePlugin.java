@@ -29,6 +29,8 @@ public final class JadeVehiclePlugin implements IWailaPlugin {
    var hit=hits.get(0);double angle=Math.toDegrees(Math.acos(Math.max(0,Math.min(1,-direction.dot(hit.normal())))));
    var result=VehicleStats.preview(ammo,ArmorModel.plate(armor,v,hit),armor.chemicalMultiplier,angle,settings.ricochets());
    double raw=mounted==null?VehicleTooltips.damageAt(player.getMainHandItem(),delta.length()):MountedWeapons.vehicle(player).getGunData(player).get(com.atsuishio.superbwarfare.data.gun.GunProp.DAMAGE);
+   DamageTuning.Weapon damageWeapon=mounted==null&&player.getMainHandItem().getItem() instanceof com.tacz.guns.api.item.IGun gun?new DamageTuning.Weapon("tacz",String.valueOf(gun.getGunId(player.getMainHandItem()))):mounted==null?null:new DamageTuning.Weapon("sbw",MountedWeapons.damageKey(MountedWeapons.vehicle(player).getGunData(player)));
+   raw*=DamageTuning.previewFactor(ProfileSync.clientDamageTuning,damageWeapon,"vehicles",false);
    double finalDamage=raw*result.damagePercent()/100;double wheelDamage=0;
    if(RunningGear.wheel(hit.part())&&settings.components()) {
     var hull=hits.stream().filter(h->h.distance()>hit.distance()+.001&&!RunningGear.wheel(h.part())&&h.part()!=com.atsuishio.superbwarfare.tools.OBB.Part.MAIN_ENGINE&&h.part()!=com.atsuishio.superbwarfare.tools.OBB.Part.SUB_ENGINE).findFirst().orElse(null);

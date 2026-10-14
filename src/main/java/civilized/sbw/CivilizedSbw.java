@@ -10,5 +10,6 @@ public final class CivilizedSbw {
   MinecraftForge.EVENT_BUS.addListener(ArmorScan::register);
   net.minecraftforge.fml.ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.COMMON,CompatConfig.SPEC,"civilized-sbw-common.toml");
   MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST,DamageCompatibility::explosion);
+  MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGHEST,DamageTuning::livingHurt);
  }
 }

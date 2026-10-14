@@ -14,6 +14,7 @@ public final class DamageCompatibility {
  public static String id(Entity entity){return entity==null?"":String.valueOf(ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()));}
  public static double vehicleFactor(Entity vehicle){return CompatConfig.factor(CompatConfig.VEHICLE_OVERRIDES.get(),id(vehicle));}
  public static DamageSource directSource(Entity projectile,Entity target,DamageSource original) {
+  DamageTuning.capture(original,projectile,false);
   if(!(target instanceof VehicleEntity)||!CompatConfig.CBC_ATTRIBUTION.get())return original;
   double scale=CompatConfig.CBC_DIRECT_SCALE.get()*CompatConfig.factor(CompatConfig.CBC_DIRECT_OVERRIDES.get(),id(projectile))*vehicleFactor(target);
   return new AttributedDamageSource(original,projectile,scale);
@@ -21,6 +22,7 @@ public final class DamageCompatibility {
  public static void explosion(ExplosionEvent.Detonate event) {
   if(event.getLevel().isClientSide)return;
   Explosion explosion=event.getExplosion();Entity projectile=explosion.getDirectSourceEntity();
+  DamageTuning.capture(explosion.getDamageSource(),projectile,true);
   boolean tacz=explosion instanceof TaczExplosionAccess && CompatConfig.TACZ_EXPLOSIONS.get();
   boolean cbc=(explosion instanceof rbasamoyai.createbigcannons.munitions.ShellExplosion || explosion instanceof rbasamoyai.createbigcannons.munitions.ImpactExplosion || explosion instanceof rbasamoyai.createbigcannons.munitions.autocannon.flak.FlakExplosion || explosion instanceof rbasamoyai.createbigcannons.munitions.big_cannon.mortar_stone.MortarStoneExplosion) && CompatConfig.CBC_ATTRIBUTION.get() && id(projectile).startsWith("createbigcannons:");
   boolean sbw=explosion instanceof CustomExplosion && projectile!=null && projectile.getPersistentData().contains(MountedWeapons.AMMO_TAG) && CompatConfig.ADVANCED_ARMOR.get() && CompatConfig.MOUNTED_ARMOR.get() && ArmorProfiles.ammo(MountedWeapons.projectileKey(projectile))!=null;
@@ -50,8 +52,9 @@ public final class DamageCompatibility {
   }
  }
  public static float directInput(float input,Entity entity,DamageSource source) {
-  if(!(entity instanceof VehicleEntity)||!(source instanceof AttributedDamageSource attributed))return input;
-  float scaled=(float)Math.min(Float.MAX_VALUE,input*attributed.inputMultiplier);
+  if(!(entity instanceof VehicleEntity))return input;
+  double legacy=source instanceof AttributedDamageSource attributed?attributed.inputMultiplier:1;
+  float scaled=DamageTuning.scale(input,legacy);
   if(CompatConfig.DEBUG.get())LOG.info("SBW compat CBC input projectile={} vehicle={} original={} scaled={}",id(source.getDirectEntity()),id(entity),input,scaled);
   return scaled;
  }

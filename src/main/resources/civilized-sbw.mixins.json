@@ -7,6 +7,7 @@
     "TaczExplosionAccessor",
     "CbcDamageSourceMixin",
     "VehicleInputMixin",
+    "VehicleDamageTuningMixin",
     "CbcImpactMixin",
     "TaczAttachmentMixin",
     "SbwProjectileProfileMixin",
